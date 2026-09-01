@@ -1,0 +1,34 @@
+﻿<Application x:Class="RechercheLivres.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:RechercheLivres"
+             StartupUri="Home.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="View/Styles/GlobalStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!--#region Assignation des dataTempaltes Views à VM (Linker le ContentControl de SelectedVM à xaml correspondant au VM)
+                *Si t'oublies de faire ça, le nom de la VM sera affichée en texte dans ta page et ne loadera pas.-->
+
+            <DataTemplate DataType="{x:Type viewmodels:SearchLivresVM}">
+                <views:SearchLivresUC />
+            </DataTemplate>
+
+            <!--#endregion-->
+
+            <converters:OwnerToCrownConverter x:Key="OwnerToCrownConverter" />
+
+            <converters:UserBalanceToTextConverter x:Key="UserBalanceToTextConverter" />
+            <converters:BalanceToColorConverter x:Key="BalanceToColorConverter" />
+            <converters:RemainingConverter x:Key="RemainingConverter" />
+            <converters:ExpenseToUserShareConverter x:Key="ExpenseToUserShareConverter" />
+
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+
+            <converters:EyeIconConverter x:Key="EyeIconConverter" />
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
