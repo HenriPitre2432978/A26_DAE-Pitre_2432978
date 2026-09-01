@@ -1,5 +1,4 @@
-﻿using BibliothequeFonctionsDeBase;
-using MySql.Data.MySqlClient;
+﻿using MySql.Data.MySqlClient;
 
 namespace RechercheLivres.Service
 {
@@ -15,7 +14,7 @@ namespace RechercheLivres.Service
         public void InitialiserConnexion()
         {
             //Se connecter à une base de données dans un serveur à l'aide de l'uid et du pwd du compte SQL
-            string connectionString = "server=sql.decinfo-cchic.ca;port=33306;uid=dev-2432978;pwd=DONNEZ-MOI 100% SVP;database=h25_devapp_2432978";
+            string connectionString = "server=sql.decinfo-cchic.ca;port=33306;uid=dev-2432978;pwd=DONNEZ-MOI 100% SVP;database=a26_e80_tp1_2432978";
 
             LaConnexion = new MySqlConnection(connectionString);
         }
