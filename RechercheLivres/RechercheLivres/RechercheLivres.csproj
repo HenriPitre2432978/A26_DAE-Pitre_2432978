@@ -9,7 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Model\Enums\" />
+    <Compile Remove="Model\Enums\**" />
+    <EmbeddedResource Remove="Model\Enums\**" />
+    <None Remove="Model\Enums\**" />
+    <Page Remove="Model\Enums\**" />
   </ItemGroup>
 
   <ItemGroup>

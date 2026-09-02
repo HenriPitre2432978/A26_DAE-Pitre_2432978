@@ -18,9 +18,9 @@ namespace RechercheLivres.View
     /// <summary>
     /// Logique d'interaction pour SettlementUC.xaml
     /// </summary>
-    public partial class NewRefundUC : UserControl
+    public partial class SearchListUC : UserControl
     {
-        public NewRefundUC()
+        public SearchListUC()
         {
             InitializeComponent();
         }

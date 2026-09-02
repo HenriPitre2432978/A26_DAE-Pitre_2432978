@@ -18,14 +18,8 @@ namespace RechercheLivres.Service
     {
         BaseVM CurrentView { get; }
 
-        void NavigateToOverview();
-        void NavigateToNewActivity();
-        void NavigateToConsultActivity(ActivityVM activity);
-        void NavigateToNewExpense(ActivityVM activity);
-        void NavigateToNewRefund();
-        void NavigateToModifyParticipant(ActivityVM activity);
-        void NavigateToCreateAccount();
-        void NavigateToLogin();
+        void NavigateToSearchList();
+        void NavigateToMainWindow();
     }
 
     #endregion
@@ -53,36 +47,8 @@ namespace RechercheLivres.Service
         //Toujours ajouter le lien VM --> View dans App.xaml.cs après la création d'une méthode de navigation 
         #region Méthodes distinctes pour chaque nouvelle navigation liée à un VM et à une vue
 
-        public void NavigateToOverview() =>
-     CurrentView = new OverviewVM(_main.ActivityVMs, _main.Participants, _main.User, this, _main);
-
-
-        public void NavigateToNewActivity() =>
-            CurrentView = new NewActivityVM(this, [.. _main.Participants], _main.User, _main.ActivityVMs);
-
-
-        public void NavigateToConsultActivity(ActivityVM activity) =>
-            CurrentView = new ConsultActivityVM(this, activity, _main.User, [.. _main.Participants]);
-
-
-        public void NavigateToNewExpense(ActivityVM activity) =>
-            CurrentView = new NewExpenseVM(this, activity, _main.User);
-
-        public void NavigateToNewRefund() =>
-      CurrentView = new SearchListVM(this, _main.ActivityVMs.ToList(), _main.User);
-
-        public void NavigateToModifyParticipant(ActivityVM activity) =>
-            CurrentView = new ModifyParticipantVM(this, [.. _main.Participants], activity);
-
-        public void NavigateToLogin()
-        {
-            CurrentView = new LoginVM(this, _main.Participants, _main);
-        }
-        public void NavigateToCreateAccount()
-        {
-            //throw new NotImplementedException();
-            CurrentView = new CreateAccountVM(this,_main.Participants,_main);
-        }
+        public void NavigateToSearchList() =>
+     CurrentView = new SearchListVM(_main.Livres,_main.Membres,_main.Emprunts);
 
         public void NavigateToMainWindow()
         {

@@ -1,5 +1,5 @@
 ﻿<Window
-    x:Class="RechercheLivres.Home"
+    x:Class="RechercheLivres.View.Home"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,10 +7,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:RechercheLivres.ViewModels"
     Title="Home"
-    Width="800"
-    Height="575"
-    MinWidth="800"
-    MinHeight="600"
+    Width="1100"
+    Height="500"
+    MinWidth="1000"
+    MinHeight="650"
     d:DataContext="{d:DesignInstance Type=vm:MainVM}"
     Closing="Window_Closing"
     WindowStartupLocation="CenterScreen"
@@ -18,7 +18,6 @@
 
     <Grid>
         <!--  Welcome Panel  -->
-        <!--  Visibility="{Binding IsWelcome, Converter={StaticResource BooleanToVisibilityConverter}}"  | Enlevé car pas nécessaire, mais je suppose que ca fait que ce contenu est caché derrière le ContentCotnrol ?  -->
         <Border>
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -38,28 +37,35 @@
                     CornerRadius="16"
                     Effect="{StaticResource CardShadow}">
                     <StackPanel VerticalAlignment="Center">
+
+                        <TextBlock
+                            Margin="0,6,0,20"
+                            HorizontalAlignment="Center"
+                            TextAlignment="Center"
+                            FontSize="14"
+                            Foreground="#9898B8">
+                            Recherchez vos livres rapidement
+                        </TextBlock>
+
                         <TextBlock
                             HorizontalAlignment="Center"
                             FontFamily="Segoe UI Light"
                             FontSize="30"
                             Foreground="#2D2D3A"
-                            Text="RechercheLivres" />
+                            Text="Recherche de Livres" />
                         <TextBlock
                             Margin="0,6,0,20"
                             HorizontalAlignment="Center"
+                            TextAlignment="Center"
                             FontSize="14"
-                            Foreground="#9898B8"
-                            Text="Gérez vos dépenses facilement" />
+                            Foreground="#9898B8"> 
+                            Henri Pitre - 2432978
+                        </TextBlock>
                         <Button
                             Margin="0,10,0,0"
-                            Command="{Binding GoToLoginCommand}"
-                            Content="Se connecter"
+                            Command="{Binding GoToSearchListCommand}"
+                            Content="Rechercher"
                             Style="{StaticResource PrimaryButton}" />
-                        <Button
-                            Margin="0,10,0,0"
-                            Command="{Binding GoToCreateUserCommand}"
-                            Content="Créer un compte"
-                            Style="{StaticResource SecondaryButton}" />
                     </StackPanel>
                 </Border>
             </Grid>

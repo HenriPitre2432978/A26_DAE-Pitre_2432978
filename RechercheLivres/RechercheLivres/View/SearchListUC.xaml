@@ -5,13 +5,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:RechercheLivres.View"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:model="clr-namespace:RechercheLivres.Model"
     xmlns:viewmodels="clr-namespace:RechercheLivres.ViewModels"
     d:DataContext="{d:DesignInstance Type=viewmodels:SearchListVM}"
-    Background="Honeydew"
     mc:Ignorable="d">
 
     <Border>
+
         <Border.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Offset="0" Color="#F0EFFF" />
@@ -24,53 +23,38 @@
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="25" />
+                <RowDefinition Height="25" /> <!--Séparateur entre header et content-->
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <!--#region  Header  : Contextual text et Btn Retour-->
-            <Border Grid.Row="0">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
 
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        FontFamily="Segoe UI Light"
-                        FontSize="26"
-                        Foreground="#2D2D3A"
-                        Text="Régler une activité" />
+            <!--#region header -->
 
-                    <!--  Bouton de navigation. Dans ce cas, Retour mène à overview  -->
-                    <Button
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        VerticalAlignment="Top"
-                        Command="{Binding ReturnToOverviewCommand}"
-                        Content="Retour"
-                        Style="{StaticResource SecondaryButton}" />
+            <StackPanel Grid.Row="0">
 
-                    <TextBlock
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        Grid.ColumnSpan="2"
-                        Margin="0,4,0,0"
-                        FontSize="13"
-                        Foreground="#9898B8"
-                        Text="Payez une dette liée à une dépense" />
-                </Grid>
-            </Border>
+                <TextBlock
+                    FontFamily="Segoe UI Light"
+                    FontSize="26"
+                    Foreground="#2D2D3A"
+                    Text="Outil de Recherche" />
+
+                <TextBlock
+                    Margin="0,4,0,0"
+                    FontSize="13"
+                    Foreground="#9898B8"
+                    Text="Consultez les livres, les membres et les emprunts de la bibliothèque !" />
+                <TextBlock
+                    Margin="0,4,0,0"
+                    FontSize="13"
+                    Foreground="#9898B8"
+                    Text="Pour rechercher de façon efficace, utilisez la barre de recherche ainsi que le tri par colonne en cliquant sur celle prioritaire." />
+
+            </StackPanel>
 
             <!--#endregion-->
 
-            <!--  MAIN CARD  -->
+            <!--#region Main content-->
+            
             <Border
                 Grid.Row="2"
                 Padding="28"
@@ -81,228 +65,260 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="auto" />
+                        <!--Titre et search bar-->
                         <RowDefinition Height="*" />
-                        <RowDefinition Height="auto" />
-
+                        <!--results list-->
                     </Grid.RowDefinitions>
 
-                    <!--#region Activity CombBox with summary-->
-                    <StackPanel Grid.Row="0">
-                        <Label Content="ACTIVITÉ" Style="{StaticResource LabelStyle}" />
+                    <!--#region Title/Search bar-->
 
-                        <!--  Pour changer le texte affiché relatif a un objet type, DisplayMemberPath="propriété"  -->
-                        <ComboBox ItemsSource="{Binding UserActivities}" SelectedItem="{Binding SelActivity}">
+                    <TextBlock
+                        Grid.Row="0"
+                        FontFamily="Segoe UI Semibold"
+                        FontSize="18"
+                        VerticalAlignment="Center"
+                        Foreground="#2D2D3A"
+                        Text="Données de la bibliothèque" />
 
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel>
+                    <!--#region Search bar -->
+                    <Grid HorizontalAlignment="Right">
 
-                                        <!--  Activity name  -->
-                                        <TextBlock FontWeight="SemiBold" Text="{Binding Name}" />
+                        <Border Grid.Row="0"
+                                Margin="0,0,0,15"
+                                Width="350"
+                                Height="38"
+                                HorizontalAlignment="Right"
+                                Background="White"
+                                BorderBrush="Gray"
+                                BorderThickness="1"
+                                CornerRadius="8">
+                            <Grid>
+                                <TextBlock
+                                    Margin="12,0,0,0"
+                                    VerticalAlignment="Center"
+                                    FontSize="14"
+                                    Foreground="Gray"
+                                    Text="🔍 : " />
 
-                                        <!--  Balance text  -->
-                                        <TextBlock>
-                                            <TextBlock.Text>
-                                                <MultiBinding Converter="{StaticResource UserBalanceToTextConverter}" StringFormat="C">
-                                                    <!--  Activity for this row  -->
-                                                    <Binding />
-                                                    <!--  Current user from VM  -->
-                                                    <Binding Path="DataContext.User" RelativeSource="{RelativeSource AncestorType=UserControl}" />
-                                                </MultiBinding>
-                                            </TextBlock.Text>
+                                <!-- TODO: corner radius -->
+                                <TextBox
+                                    Margin="50,0,0,0"
+                                    Height="20"
+                                    Width="280"
+                                    VerticalContentAlignment="Center"
+                                    BorderBrush="Gray"
+                                    BorderThickness="1"
+                                    FontSize="13"
+                                    Foreground="#2D2D3A"
+                                    Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+                            </Grid>
+                        </Border>
 
-                                            <TextBlock.Foreground>
-                                                <MultiBinding Converter="{StaticResource BalanceToColorConverter}">
-                                                    <!--  Activity for this row  -->
-                                                    <Binding />
-                                                    <!--  Current user from VM  -->
-                                                    <Binding Path="DataContext.User" RelativeSource="{RelativeSource AncestorType=UserControl}" />
-                                                </MultiBinding>
-                                            </TextBlock.Foreground>
-                                        </TextBlock>
+                    </Grid>
 
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
 
-                        </ComboBox>
-                    </StackPanel>
+                    <!--#endregion-->
+                    
                     <!--#endregion-->
 
-                    <!--  Expense List  -->
-                    <Label
-                        Grid.Row="1"
-                        Margin="0,20,0,0"
-                        Content="DÉPENSES"
-                        Style="{StaticResource LabelStyle}" />
+                    <!--#region Tabs-->
 
-                    <ListView
+                    <TabControl
                         Grid.Row="2"
-                        Height="200"
-                        d:ItemsSource="{d:SampleData ItemCount=5}"
-                        ItemsSource="{Binding Expenses}"
-                        SelectedItem="{Binding SelectedExpense, Mode=TwoWay}">
+                        Style="{StaticResource TabControlStyle}"
+                        ItemContainerStyle="{StaticResource TabItemStyle}">
+                        <!-- Utilisation d'un DataGrid au lieu des GridView pour permettre le tri par colonne-->
+                        
+                        <!--#region Livres-->
 
-                        <!--  Appliquer le style aux ListViewItems  -->
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="Foreground" Value="Black" />
-                                <Setter Property="Background" Value="Transparent" />
-                                <Setter Property="Cursor" Value="Arrow" />
-                                <Style.Triggers>
-                                    <!--  Row is inactive (manuel isenabled false)  -->
-                                    <DataTrigger Binding="{Binding IsActive}" Value="False">
-                                        <Setter Property="Foreground" Value="Gray" />
-                                        <Setter Property="Background" Value="#FFF5F5F5" />
-                                        <Setter Property="Opacity" Value="0.6" />
-                                        <!--  effet gris  -->
-                                        <Setter Property="Cursor" Value="Arrow" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ListView.ItemContainerStyle>
+                        <TabItem Header="LIVRES">
+                            <Grid Margin="0,15,0,0">
+                                <DataGrid
+                                    ItemsSource="{Binding Livres}"
+                                    Style="{StaticResource DataGridStyle}"
+                                    ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
+                                    RowStyle="{StaticResource DataGridRowStyle}"
+                                    CellStyle="{StaticResource DataGridCellStyle}"
+                                    SelectionMode="Single">
 
-                        <ListView.View>
+                                    <DataGrid.Columns>
 
-                            <GridView ColumnHeaderContainerStyle="{StaticResource ColumnHeaderStyle}">
+                                        <DataGridTextColumn
+                                            Width="60"
+                                            Binding="{Binding IdLivre}"
+                                            Header="ID"
+                                            SortMemberPath="IdLivre" />
 
-                                <GridViewColumn Width="50" Header="Rôle">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock ToolTip="Vous êtes propriétaire de cette dépense">
-                                                <TextBlock.Text>
-                                                    <MultiBinding Converter="{StaticResource OwnerToCrownConverter}">
-                                                        <!--  Mettre le "DataContext" à l'activité de la row actuelle  -->
-                                                        <Binding />
-                                                        <!--  User from MainVM  -->
-                                                        <Binding Path="DataContext.User" RelativeSource="{RelativeSource AncestorType=UserControl}" />
-                                                    </MultiBinding>
-                                                </TextBlock.Text>
-                                            </TextBlock>
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
+                                        <DataGridTextColumn
+                                            Width="250"
+                                            Binding="{Binding Titre}"
+                                            Header="Titre"
+                                            SortMemberPath="Titre" />
 
-                                <GridViewColumn
-                                    Width="160"
-                                    DisplayMemberBinding="{Binding Name}"
-                                    Header="Nom activité" />
-                                <!--  Ajouter couronne ou autre icone pour owner  -->
+                                        <DataGridTextColumn
+                                            Width="150"
+                                            Binding="{Binding Auteur}"
+                                            Header="Auteur"
+                                            SortMemberPath="Auteur" />
 
-                                <GridViewColumn Width="120" Header="Total">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Amount, StringFormat=C}" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
+                                        <DataGridTextColumn
+                                            Width="130"
+                                            Binding="{Binding Genre}"
+                                            Header="Genre"
+                                            SortMemberPath="Genre" />
 
-                                <GridViewColumn Width="60" Header="👥">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock
-                                                Width="50"
-                                                Height="20"
-                                                Cursor="Hand"
-                                                Text="{Binding Participants.Count}">
+                                        <DataGridTextColumn
+                                            Width="130"
+                                            Binding="{Binding DatePublication, StringFormat={}{0:dd/MM/yyyy}}"
+                                            Header="Publication"
+                                            SortMemberPath="DatePublication" />
 
-                                                <TextBlock.ToolTip>
-                                                    <ToolTip>
-                                                        <StackPanel>
-                                                            <TextBlock
-                                                                Margin="0,0,0,4"
-                                                                FontWeight="Bold"
-                                                                Text="Participants:" />
-                                                            <ItemsControl ItemsSource="{Binding Participants}">
-                                                                <ItemsControl.ItemTemplate>
-                                                                    <DataTemplate>
-                                                                        <TextBlock Text="{Binding Username}" />
-                                                                    </DataTemplate>
-                                                                </ItemsControl.ItemTemplate>
-                                                            </ItemsControl>
-                                                        </StackPanel>
-                                                    </ToolTip>
-                                                </TextBlock.ToolTip>
-                                            </TextBlock>
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
+                                        <DataGridTextColumn
+                                            Width="150"
+                                            Binding="{Binding ISBN}"
+                                            Header="ISBN"
+                                            SortMemberPath="ISBN" />
 
-                                <GridViewColumn Width="120" Header="Votre part">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock>
-                                                <TextBlock.Text>
-                                                    <MultiBinding Converter="{StaticResource ExpenseToUserShareConverter}">
-                                                        <!--  Current Expense  -->
-                                                        <Binding />
-                                                        <!--  Current User  -->
-                                                        <Binding Path="DataContext.User" RelativeSource="{RelativeSource AncestorType=UserControl}" />
-                                                        <!--  VM to access Activity/Refunds  -->
-                                                        <Binding Path="DataContext" RelativeSource="{RelativeSource AncestorType=UserControl}" />
-                                                    </MultiBinding>
-                                                </TextBlock.Text>
-                                            </TextBlock>
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
+                                        <DataGridTextColumn
+                                            Width="100"
+                                            Binding="{Binding NbExemplaires}"
+                                            Header="Exemplaires"
+                                            SortMemberPath="NbExemplaires" />
 
-                                <GridViewColumn Width="150" Header="Solde 💳">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock ToolTip="➕ : Ce qu'on vous doit, ➖ : Ce que vous devez">
-                                                <TextBlock.Text>
-                                                    <MultiBinding Converter="{StaticResource RemainingConverter}">
-                                                        <!--  Current Expense  -->
-                                                        <Binding />
-                                                        <!--  Pass the VM itself  -->
-                                                        <Binding Path="DataContext" RelativeSource="{RelativeSource AncestorType=UserControl}" />
-                                                    </MultiBinding>
-                                                </TextBlock.Text>
+                                    </DataGrid.Columns>
 
-                                                <!--  Set foreground color dynamically  -->
-                                                <TextBlock.Foreground>
-                                                    <MultiBinding Converter="{StaticResource BalanceToColorConverter}">
-                                                        <Binding />
-                                                        <!--  Expense  -->
-                                                        <Binding Path="DataContext.User" RelativeSource="{RelativeSource AncestorType=UserControl}" />
-                                                        <Binding Path="DataContext" RelativeSource="{RelativeSource AncestorType=UserControl}" />
-                                                        <!--  VM  -->
-                                                    </MultiBinding>
-                                                </TextBlock.Foreground>
-                                            </TextBlock>
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <!--  rouge neg, vert pos, gris null/0  -->
+                                </DataGrid>
+                            </Grid>
+                        </TabItem>
 
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
+                        <!--#endregion-->
 
-                    <StackPanel
-                        Grid.Row="3"
-                        HorizontalAlignment="Right"
-                        Orientation="Horizontal">
-                        <TextBox
-                            Width="120"
-                            Margin="5"
-                            Style="{StaticResource InputStyle}"
-                            Text="{Binding PaymentAmountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <!--  Pay Button  -->
-                        <Button
-                            Width="180"
-                            Command="{Binding PayCommand}"
-                            Content="✓ Payer ma part"
-                            Style="{StaticResource PrimaryButton}" />
-                    </StackPanel>
+                        <!--#region Membres-->
+
+                        <TabItem Header="MEMBRES">
+
+                            <Grid Margin="0,15,0,0">
+
+                                <DataGrid
+                                    ItemsSource="{Binding Membres}"
+                                    Style="{StaticResource DataGridStyle}"
+                                    ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
+                                    RowStyle="{StaticResource DataGridRowStyle}"
+                                    CellStyle="{StaticResource DataGridCellStyle}"
+                                    SelectionMode="Single">
+
+                                    <DataGrid.Columns>
+
+                                        <DataGridTextColumn
+                                            Width="70"
+                                            Binding="{Binding IdMembre}"
+                                            Header="ID"
+                                            SortMemberPath="IdMembre" />
+
+                                        <DataGridTextColumn
+                                            Width="250"
+                                            Binding="{Binding Nom}"
+                                            Header="Nom"
+                                            SortMemberPath="Nom" />
+
+                                        <DataGridTextColumn
+                                            Width="280"
+                                            Binding="{Binding Email}"
+                                            Header="Courriel"
+                                            SortMemberPath="Email" />
+
+                                        <DataGridTextColumn
+                                            Width="180"
+                                            Binding="{Binding Telephone}"
+                                            Header="Téléphone"
+                                            SortMemberPath="Telephone" />
+
+                                    </DataGrid.Columns>
+
+                                </DataGrid>
+
+                            </Grid>
+
+                        </TabItem>
+
+                        <!--#endregion-->
+
+
+                        <!--#region Emprunts-->
+
+                        <TabItem Header="EMPRUNTS">
+
+                            <Grid Margin="0,15,0,0">
+
+                                <DataGrid
+                                    ItemsSource="{Binding Emprunts}"
+                                    Style="{StaticResource DataGridStyle}"
+                                    ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
+                                    RowStyle="{StaticResource DataGridRowStyle}"
+                                    CellStyle="{StaticResource DataGridCellStyle}"
+                                    SelectionMode="Single">
+
+                                    <DataGrid.Columns>
+
+                                        <DataGridTextColumn
+                                            Width="70"
+                                            Binding="{Binding IdEmprunt}"
+                                            Header="ID"
+                                            SortMemberPath="IdEmprunt" />
+
+                                        <DataGridTextColumn
+                                            Width="250"
+                                            Binding="{Binding Titre}"
+                                            Header="Livre"
+                                            SortMemberPath="Titre" />
+
+                                        <DataGridTextColumn
+                                            Width="200"
+                                            Binding="{Binding NomMembre}"
+                                            Header="Membre"
+                                            SortMemberPath="NomMembre" />
+
+                                        <DataGridTextColumn
+                                            Width="120"
+                                            Binding="{Binding DateDebut, StringFormat={}{0:dd/MM/yyyy}}"
+                                            Header="Début"
+                                            SortMemberPath="DateDebut" />
+
+                                        <DataGridTextColumn
+                                            Width="120"
+                                            Binding="{Binding DateEcheance, StringFormat={}{0:dd/MM/yyyy}}"
+                                            Header="Échéance"
+                                            SortMemberPath="DateEcheance" />
+
+                                        <DataGridTextColumn
+                                            Width="120"
+                                            Binding="{Binding DateRetour, StringFormat={}{0:dd/MM/yyyy}}"
+                                            Header="Retour"
+                                            SortMemberPath="DateRetour" />
+
+                                    </DataGrid.Columns>
+
+                                </DataGrid>
+
+                            </Grid>
+
+                        </TabItem>
+
+                        <!--#endregion-->
+
+                    </TabControl>
+
+                    <!--#endregion--> 
 
                 </Grid>
 
             </Border>
 
+            <!--#endregion-->
+
         </Grid>
+
     </Border>
+
 </UserControl>

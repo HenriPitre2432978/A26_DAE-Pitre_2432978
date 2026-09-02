@@ -3,6 +3,7 @@ using System.ComponentModel;
 
 namespace RechercheLivres.ViewModels
 {
+    // Template BaseViewModel
     public class BaseVM : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
