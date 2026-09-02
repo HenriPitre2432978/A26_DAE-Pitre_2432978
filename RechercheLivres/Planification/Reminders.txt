@@ -1,0 +1,7 @@
+Reminders
+
+-- Call Procedure stockée a chaque reload de l'UC
+-- uc pour chaque list type ?
+-- bouton refresh foreach list au lieu de changer de uc
+-- Disregard tables genres et members pour l'instant puisque pas utile pour le state actuel de lapp
+-- gérer les retours dedans l'objet emprunt avec retour et date retour supposé

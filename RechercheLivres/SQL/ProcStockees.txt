@@ -1,0 +1,58 @@
+CREATE PROCEDURE GetTousLivres()
+BEGIN
+
+    SELECT
+        L.IdLivre,
+        L.Titre,
+        L.DatePublication,
+        L.ISBN,
+        L.NbExemplaires,
+        A.Nom AS Auteur,
+        G.Nom AS Genre
+    FROM Livre L
+    
+    -- Convertir en txt (Plus sécuritaire vu qu'on passe pas l'id ?) 
+    -- Et plus facile convertir id en txt depuis sql qu'en C#
+    
+    INNER JOIN Auteur A
+        ON L.IdAuteur = A.IdAuteur
+    INNER JOIN Genre G
+        ON L.IdGenre = G.IdGenre;
+
+END
+
+CREATE PROCEDURE GetTousMembres()
+BEGIN
+
+    SELECT
+        M.IdMembre,
+        M.Nom,
+        M.Email,
+        M.Telephone
+    FROM Membre M;
+END
+
+CREATE PROCEDURE GetTousGenres()
+BEGIN
+    SELECT
+        G.IdGenre,
+        G.Nom
+    FROM Genre G;
+END
+
+CREATE PROCEDURE GetTousEmprunts()
+BEGIN
+    SELECT
+        E.IdEmprunt,
+        E.IdLivre,
+        L.Titre,
+        E.IdMembre,
+        M.Nom AS NomMembre,
+        E.DateDebut,
+        E.DateEcheance,
+        E.DateRetour
+    FROM Emprunt E
+    INNER JOIN Livre L ON E.IdLivre = L.IdLivre
+    INNER JOIN Membre M ON E.IdMembre = M.IdMembre;
+END
+

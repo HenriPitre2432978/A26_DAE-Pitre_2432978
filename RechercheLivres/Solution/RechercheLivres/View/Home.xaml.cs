@@ -27,9 +27,9 @@ namespace RechercheLivres.View
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            if (DataContext is MainVM vm)
+            if (DataContext is MainVM)
             {
-                bool canClose = vm.Close();
+                bool canClose = MainVM.Close();
                 if (!canClose)
                     e.Cancel = true;
             }

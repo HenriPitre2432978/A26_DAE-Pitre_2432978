@@ -1,0 +1,66 @@
+-- https://chatgpt.com/share/6a9184b0-a42c-83e9-840f-ca51ad20aa9b
+
+-- ============================================
+-- DONNÉES DE TEST
+-- ============================================
+
+-- AUTEURS
+INSERT INTO Auteur (Nom) VALUES
+('Victor Hugo'),
+('George Orwell'),
+('J.K. Rowling'),
+('Agatha Christie'),
+('Gabriel García Márquez'),
+('Yann Martel');
+
+-- GENRES
+INSERT INTO Genre (Nom) VALUES
+('Roman'),
+('Science-fiction'),
+('Fantastique'),
+('Policier'),
+('Drame'),
+('Aventure');
+
+-- MEMBRES
+INSERT INTO Membre (Nom, Email, Telephone) VALUES
+('Jean Tremblay', 'jean.tremblay@email.com', '418-555-1023'),
+('Marie Gagnon', 'marie.gagnon@email.com', '418-555-2145'),
+('Thomas Roy', 'thomas.roy@email.com', '418-555-3278'),
+('Sophie Bouchard', 'sophie.bouchard@email.com', '418-555-4389'),
+('Alexandre Côté', 'alexandre.cote@email.com', '418-555-5412');
+
+-- LIVRES
+INSERT INTO Livre
+(Titre, DatePublication, ISBN, NbExemplaires, IdAuteur, IdGenre)
+VALUES
+('Les Misérables', '1862-03-30', '9782070409189', 4, 1, 1),
+('1984', '1949-06-08', '9780451524935', 5, 2, 2),
+('Harry Potter à l''école des sorciers', '1997-06-26', '9782070541270', 6, 3, 3),
+('Le Crime de l''Orient-Express', '1934-01-01', '9780007119318', 3, 4, 4),
+('Cent ans de solitude', '1967-05-30', '9780307474728', 2, 5, 1),
+('L''Histoire de Pi', '2001-09-11', '9780156027328', 3, 6, 6);
+
+-- EMPRUNTS
+-- DateEcheance est calculée automatiquement = DateDebut + 30 jours
+
+INSERT INTO Emprunt
+(IdLivre, IdMembre, DateDebut, DateRetour)
+VALUES
+-- Livre emprunté et retourné
+(1, 1, '2026-07-01', '2026-07-20'),
+
+-- Livre encore emprunté
+(2, 2, '2026-08-01', NULL),
+
+-- Livre retourné après quelques jours
+(3, 3, '2026-06-15', '2026-07-05'),
+
+-- Emprunt actuellement actif
+(4, 4, '2026-08-10', NULL),
+
+-- Emprunt en retard
+(5, 5, '2026-07-01', NULL),
+
+-- Emprunt retourné
+(6, 1, '2026-05-10', '2026-05-25');
