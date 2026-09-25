@@ -1,0 +1,37 @@
+@startuml Jeu
+left to right direction
+
+' Acteurs primaires
+actor :Joueur: as Joueur
+actor :Hôte: as JoueurServeur
+actor :Tiers: as Tiers
+
+' Liens invisibles pour forcer l'alignement vertical des acteurs
+Joueur -[hidden]- JoueurServeur
+JoueurServeur -[hidden]- Tiers
+
+' Système et cas d'utilisation
+rectangle "Jeu robot - Cas d'utilisation" {
+    ' Cas d'utilisation
+    ("Choisir son rôle") as ChoisirRole
+    ("Configurer la connexion") as Connexion
+    ("Rejoindre une partie") as RejoindrePartie
+    ("Répartir ses points d'amélioration") as RepartirPoints
+    ("Jouer un tour") as JouerTour
+    ("Rejouer une partie") as RejouerPartie
+    ("Quitter le jeu") as QuitterJeu
+    ("Créer une partie") as CreerPartie
+
+    Tiers -- ChoisirRole
+
+    JoueurServeur -- CreerPartie
+    CreerPartie <.. RepartirPoints : extends
+    RepartirPoints <.. JouerTour : extends
+    RejoindrePartie <.. RepartirPoints : extends
+    Joueur -- Connexion
+    Connexion <.. RejoindrePartie : extends
+    RejoindrePartie <.. RejouerPartie : extends
+    RejoindrePartie <.. QuitterJeu : extends
+}
+
+@enduml
