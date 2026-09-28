@@ -5,6 +5,7 @@ using RobotFight.MessageHandling;
 using RobotFight.Models;
 using RobotFight.Models.Enums;
 using RobotFight.Views;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 
 namespace RobotFight.Controllers
@@ -33,13 +34,18 @@ namespace RobotFight.Controllers
         #region Méthodes Communes
 
         /// <summary>
-        /// Run initial: Demande si instance = S/C, Et poursuit le programme
-        /// selon.
+        /// Run initial: Demande si instance = host, Et poursuit le programme  selon.
         /// </summary>
-        public Task Run() =>
-            view.AskPlayerType() == "S"
-              ? CreateGame()
-              : JoinGame(view.AskIpAddress(), view.AskPort());
+        public Task Run()
+        {
+            if (view.AskIsHostInstance())
+                return CreateGame();
+            else
+            {
+                ConsoleView.BaseDisplay("CONNEXION AU SERVEUR");
+                return JoinGame(view.AskIpAddress(), view.AskPort());
+            }
+        }
 
         /// <summary>
         /// Diagram signature: l'état courant de la partie.
@@ -97,7 +103,10 @@ namespace RobotFight.Controllers
             //Si erreur (déco, etc) skip
             if (game == null) return Task.CompletedTask;
 
-            view.ShowMessage($"{actor} joue {action} ({game.LastDamage} dégâts) — Hôte {game.HostRobot.Hp} PV, Client {game.ClientRobot.Hp} PV");
+            view.ShowMessage($"---");
+            view.ShowMessage($"{actor} joue {action} ! ({game.LastDamage} dégâts)");
+            view.ShowMessage($"Hôte {game.HostRobot.Hp} PV, Vous {game.ClientRobot.Hp} PV");
+            view.ShowMessage($"---\n");
 
             //Envoyer résultat à serveur 
             return Send(MessageType.PLAYER_RESULT, actor, action, game.LastDamage,
@@ -155,10 +164,11 @@ namespace RobotFight.Controllers
             //EVENT lorsque déconnecté, reset game et wait for player
             server.PlayerDisconnected += OnPlayerDisconnected;
 
-            //If everything OK, start server
+            //If everything OK, display start server
+            ConsoleView.BaseDisplay("DÉMARRAGE SERVEUR");
+
             view.ShowMessage($"Serveur démarré sur le port {Config.PORT} à {Config.IP_ADDRESS}.");
             view.ShowMessage($"En attente d'un joueur...");
-
 
             //Start server jusque StopServer() called
             await server.StartServer(IPAddress.Parse(Config.IP_ADDRESS), Config.PORT);
@@ -178,8 +188,7 @@ namespace RobotFight.Controllers
         }
 
         /// <summary>
-        /// Lit la config de l'hôte sur un thread séparé pour pas geler le
-        /// program
+        /// Lit la config de l'hôte sur un thread séparé pour pas geler le program
         /// </summary>
         private void StartHostConfigThread()
         {
@@ -221,6 +230,7 @@ namespace RobotFight.Controllers
             game = null;
 
             //Annoncer reconnexion
+            ConsoleView.BaseDisplay("DÉMARRAGE DU SERVEUR");
             view.ShowMessage($"Serveur démarré sur le port {Config.PORT} à {Config.IP_ADDRESS}.");
             view.ShowMessage("Le joueur s'est déconnecté. En attente d'un joueur...");
         }
@@ -303,6 +313,7 @@ namespace RobotFight.Controllers
             menu.AddHandler(new PlayerLeaveHandler(client, view, client.Exit), MessageType.SERVER_BUSY);
             menu.AddHandler(new QuitHandler(client, view, client.Exit), MessageType.QUIT);
 
+            ConsoleView.BaseDisplay("CLIENT | PARTIE EN COURS ");
             client.MessageReceived += menu.Execute;
 
             //Forcer Done à complete la task pour déconnecter le joueur

@@ -27,7 +27,10 @@ namespace RobotFight.Commands.Handlers
 
                 case MessageType.PLAYER_RESULT:  // diag: qui(client/hote);action;degats;pvHote;pvClient;energieHote;energieClient
                     //Affiche le résultat du tour qui vient d'être joué
-                    view.ShowMessage($"{a[0]} : {a[1]} ({a[2]} dégâts) → Hôte {a[3]} PV, Vous {a[4]} PV");
+                    view.ShowMessage($"---");
+                    view.ShowMessage($"{a[0]} joue {a[1]} ! ({a[2]} dégâts)");
+                    view.ShowMessage($"Hôte {a[3]} PV, Vous {a[4]} PV");
+                    view.ShowMessage($"---\n");
                     break;
 
                 case MessageType.GAME_END:       // gagnant;pvHote;pvClient

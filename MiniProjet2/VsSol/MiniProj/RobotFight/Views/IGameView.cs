@@ -8,10 +8,10 @@ namespace RobotFight.Views
     /// </summary>
     public interface IGameView
     {
-        string AskPlayerType();
+        bool AskIsHostInstance();
         string AskIpAddress();
         int AskPort();
-        void ShowMessage(string message);
+        void ShowMessage(string message, bool isSecondary = false, bool skipLines = false);
         void ShowWinner(Robot? robot); //null to prevent aucun gagnant (impossible masi on sait jamais)
         RobotConfig AskPlayerConfig(int pointsToGive);
         GameAction AskPlayerAction();

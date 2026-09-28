@@ -23,7 +23,7 @@ namespace RobotFight.Commands.Handlers
                 if (message.Data != "CLIENT")
                 {
                     //Pas le tour du client: skip/wait
-                    view.ShowMessage("Tour de l'hôte...");
+                    view.ShowMessage("Tour de l'hôte...\n");
                     return;
                 }
 

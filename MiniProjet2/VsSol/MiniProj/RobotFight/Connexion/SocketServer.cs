@@ -1,6 +1,7 @@
 ﻿using RobotFight.MessageHandling;
 using RobotFight.Models;
 using RobotFight.Models.Enums;
+using RobotFight.Views;
 using System.Net;
 using System.Net.Sockets;
 
@@ -18,6 +19,7 @@ namespace RobotFight.Connexion
 
         public async Task StartServer(IPAddress ip, int port)
         {
+
             //Create a  tcp listener with config's address and port
             listener = new TcpListener(ip, port);
             listener.Start();
@@ -40,8 +42,12 @@ namespace RobotFight.Connexion
                     //Connect la connexion potentielle au socket client
                     player = connection;
 
+                    //TODO: DANGER : EVIL: DIS LE COMME TU VEUX
+                    ConsoleView.BaseDisplay("HÔTE | PARTIE EN COURS ");
+
                     //Listen le client et dispatch le msg au Invoke (callback) 
                     _ = ServePlayer(connection);
+
                 }
             }
             //Si socket terminé ou client est disposed

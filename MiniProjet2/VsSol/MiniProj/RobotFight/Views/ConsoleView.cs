@@ -1,5 +1,6 @@
 using RobotFight.Models;
 using RobotFight.Models.Enums;
+using Base = BibliothequeFonctionsDeBase.FonctionsDeBase;
 
 namespace RobotFight.Views
 {
@@ -8,51 +9,75 @@ namespace RobotFight.Views
     /// </summary>
     public class ConsoleView : IGameView
     {
-        public string AskPlayerType()
+        public static void BaseDisplay(string title) => Base.AfficherTitre(title);
+
+        public bool AskIsHostInstance()
         {
-            Console.Write("Serveur (S) ou client (C) ? ");
-            ConsoleKey key = ReadKey(ConsoleKey.S, ConsoleKey.C);
-            return key == ConsoleKey.S ? "S" : "C";
+            BaseDisplay("CHOIX DE L'INSTANCE");
+
+            bool isHost;
+            Base.DisplayLineChoices(["Créer la partie", "Rejoindre une partie en attente"]);
+
+            if (Base.LireChiffre("# Choix: ", 2).ToString()[0] == '1')
+                isHost = true;
+            else isHost = false;
+
+            return isHost;
         }
 
-        public string AskIpAddress()
-        {
-            Console.Write("IP du serveur : ");
-            string? ip = Console.ReadLine();
-            return string.IsNullOrWhiteSpace(ip) ? Config.IP_ADDRESS : ip.Trim();
-        }
+        public string AskIpAddress() => Base.LireAdresseIP("Ip du Serveur : ");
+
         public int AskPort()
         {
-            int port = AskInt("Port : ");
-            return port;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            int r = Base.LireEntierMinMax("Port : ", 1024, 49151);
+            Console.ResetColor();
+            return r;
         }
 
-        public void ShowMessage(string message) => Console.WriteLine(message);
+        public void ShowMessage(string message, bool isSecondary = false, bool skipLines = false)
+        {
+            ConsoleColor c = ConsoleColor.White;
+            if (isSecondary)
+            {
+                c = ConsoleColor.DarkGray;
+            }
+            if (skipLines)
+            {
+                Console.WriteLine();
+                Base.AfficherTexte(message, c);
+                Console.WriteLine();
+                Console.WriteLine();
+            }
+            else
+                Base.AfficherTexteCentre(message);
 
+            Console.ResetColor();
+        }
         public void ShowWinner(Robot? robot)
         {
             if (robot == null)
             {
-                Console.WriteLine("Égalité : les deux robots sont tombés à 0 PV.");
+                Base.AfficherTexteCentre("Égalité : les deux robots sont tombés à 0 PV.");
                 return;
             }
-            Console.WriteLine(robot.IsHost ? "L'hôte remporte le combat !" : "Le client remporte le combat !");
+            Base.AfficherTexteCentre(robot.IsHost ? "L'hôte remporte le combat !" : "Le client remporte le combat !");
         }
 
         public RobotConfig AskPlayerConfig(int pointsToGive)
         {
             while (true)
             {
-                Console.WriteLine($"Répartissez {pointsToGive} points.");
-                RobotConfig conf = new(AskInt("  PV     : "), AskInt("  Armure : "), AskInt("  Dégâts : "));
+                Base.AfficherTexteCentre($"Répartissez {pointsToGive} points.");
+                RobotConfig conf = new(Base.LireEntierMinMax("  PV     : ", 0, 10), Base.LireEntierMinMax("  ARMURE : ", 0, 10), Base.LireEntierMinMax("  DÉGÂTS : ", 0, 10));
                 if (conf.IsValid(pointsToGive)) return conf;
-                Console.WriteLine($"Le total doit faire exactement {pointsToGive}.");
+                Base.AfficherTexteCentre($"Le total doit faire exactement {pointsToGive}.");
             }
         }
 
         public GameAction AskPlayerAction()
         {
-            Console.Write("Action — (A)ttaque, (D)éfense, (P)uissance, (R)echarge : ");
+            ShowMessage("Action — (A)ttaque, (D)éfense, (P)uissance, (R)echarge : ", true, true);
             return ReadKey(ConsoleKey.A, ConsoleKey.D, ConsoleKey.P, ConsoleKey.R) switch
             {
                 ConsoleKey.D => GameAction.DEFENSE,
@@ -73,16 +98,7 @@ namespace RobotFight.Views
             ConsoleKey key;
             do key = Console.ReadKey(true).Key;
             while (!allowed.Contains(key));
-            Console.WriteLine(key);
             return key;
-        }
-
-        private static int AskInt(string prompt)
-        {
-            int value;
-            do Console.Write(prompt);
-            while (!int.TryParse(Console.ReadLine(), out value));
-            return value;
         }
     }
 }
