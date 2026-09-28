@@ -18,7 +18,7 @@ namespace RobotFight.Commands.Handlers
         {
             string[] a = message.Args;
 
-            switch (message.Type)
+            switch (message.MessageType)
             {
                 case MessageType.GAME_START:     // diag: pvHote;pvClient;energieHote;energieClient
                     //Affiche les stats de départ des deux robots

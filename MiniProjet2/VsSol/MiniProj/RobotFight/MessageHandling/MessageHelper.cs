@@ -1,10 +1,13 @@
 using RobotFight.Models;
 using RobotFight.Models.Enums;
+using System.Text.Json;
 
 namespace RobotFight.MessageHandling
 {
     public static class MessageHelper
     {
+        private static readonly JsonSerializerOptions JsonSerializerOption = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
         /// <summary>
         /// Créer le message à partir des params donnés
         /// </summary>
@@ -14,7 +17,7 @@ namespace RobotFight.MessageHandling
         /// <param name="data">Data liée au contexte du message</param>
         /// <returns>Le message formatté</returns>
         public static Message BuildMessage(MessageType type, GameAction action, GameStatus status, string data) =>
-            new() { Type = type, Action = action, Status = status, Data = data ?? string.Empty };
+            new() { MessageType = type, Action = action, Status = status, Data = data ?? string.Empty };
 
         /// <summary>
         /// Créer le message à partir des params donnés
@@ -37,8 +40,7 @@ namespace RobotFight.MessageHandling
         /// <returns>La string du msg sérialisé</returns>
         public static string Serialize(Message message)
         {
-            string keyword = CommandDictionary.GetCommand(message.Type);
-            return message.Data.Length == 0 ? keyword : keyword + CommandDictionary.SEPARATOR + message.Data;
+            return JsonSerializer.Serialize(message, JsonSerializerOption);
         }
 
         /// <summary>
@@ -52,13 +54,15 @@ namespace RobotFight.MessageHandling
             if (string.IsNullOrWhiteSpace(raw))
                 throw new FormatException("Message vide");
 
-            raw = raw.Trim();
-            MessageType type = CommandDictionary.GetMessageType(raw);
-            string[] parts = raw.Split(CommandDictionary.SEPARATOR, 2);
-            string data = parts.Length > 1 ? parts[1] : string.Empty;
+            //raw = raw.Trim();
+            //MessageType type = CommandDictionary.GetMessageType(raw);
+            //string[] parts = raw.Split(CommandDictionary.SEPARATOR, 2);
+            //string data = parts.Length > 1 ? parts[1] : string.Empty;
+
+            Message r = JsonSerializer.Deserialize<Message>(raw, JsonSerializerOption);
 
             //Créer le msg à partir des infos extracted
-            return BuildMessage(type, ExtractAction(type, data), StatusFor(type), data);
+            return BuildMessage(r.MessageType, ExtractAction(r.MessageType, r.Data), StatusFor(r.MessageType), r.Data);
         }
 
 

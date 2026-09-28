@@ -8,7 +8,7 @@ namespace RobotFight.Models
     /// </summary>
     public class Message
     {
-        public MessageType Type { get; set; }
+        public MessageType MessageType { get; set; }
         public GameAction Action { get; set; }
         public GameStatus Status { get; set; }
 
@@ -18,6 +18,6 @@ namespace RobotFight.Models
         /// <summary>Data split on ';' → data[0], data[1]...</summary>
         public string[] Args => Data.Length == 0 ? Array.Empty<string>() : Data.Split(';');
 
-        public override string ToString() => $"{Type} [{Data}]";
+        public override string ToString() => $"{MessageType} [{Data}]";
     }
 }

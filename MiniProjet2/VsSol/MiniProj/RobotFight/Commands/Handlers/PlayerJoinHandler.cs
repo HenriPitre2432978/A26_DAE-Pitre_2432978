@@ -22,7 +22,7 @@ namespace RobotFight.Commands.Handlers
         /// <returns></returns>
         public override async Task Handle(Message message)
         {
-            if (message.Type == MessageType.PLAYER_JOIN)
+            if (message.MessageType == MessageType.PLAYER_JOIN)
             {
                 //lorsque joueur connecté, avertir controller et showMsg to server
                 view.ShowMessage("Un joueur s'est connecté.");
@@ -31,7 +31,7 @@ namespace RobotFight.Commands.Handlers
                 //Dans gamecontroller, appelle prompthostconfig
                 onHostJoined?.Invoke();
             }
-            else if (message.Type == MessageType.WELCOME)
+            else if (message.MessageType == MessageType.WELCOME)
             {
                 //Server acceuille client: call back à OnWelcome comme si premier join
                 view.ShowMessage($"Connecté à {message.Data}.");

@@ -8,7 +8,7 @@ namespace RobotFight.Models
     public class Config
     {
         public const int PORT = 6767;
-        public const string IP_ADDRESS = "127.0.0.1";
+        public static string IP_ADDRESS = IPAddress.Any.ToString();
         public const int MAX_PLAYERS = 2;
         public const int POINTS_TO_GIVE = 10;
         public const int BASE_ENERGY = 2;

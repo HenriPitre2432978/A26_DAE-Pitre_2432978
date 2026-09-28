@@ -15,11 +15,15 @@ namespace RobotFight.Connexion
 
         public async Task ConnectToServer(string ipAddress, int port)
         {
-            TcpClient tcp = new();
+            Socket socket = new(
+        AddressFamily.InterNetwork,
+        SocketType.Stream,
+        ProtocolType.Tcp
+    );
 
-            await tcp.ConnectAsync(ipAddress, port);
+            await socket.ConnectAsync(ipAddress, port);
 
-            connection = new ConnectionHandler(tcp);
+            connection = new ConnectionHandler(socket);
 
             _ = Listen(connection);
         }

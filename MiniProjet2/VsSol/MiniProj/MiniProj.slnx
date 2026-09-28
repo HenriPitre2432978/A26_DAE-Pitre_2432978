@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="BibliothequeFonctionsDeBases/BibliothequeFonctions/BibliothequeFonctionsDeBase.csproj" />
   <Project Path="RobotFight/RobotFight.csproj" />
+  <Project Path="TestProject1/TestProject1.csproj" Id="6be5040f-c5ac-4a13-93a4-83ae03f97f03" />
 </Solution>

@@ -11,7 +11,6 @@ namespace RobotFight.Connexion
     public class SocketServer : IMessageSender
     {
 
-        private TcpListener? listener;
         private ConnectionHandler? player;
 
         public event Func<Message, Task>? MessageReceived;
@@ -21,15 +20,20 @@ namespace RobotFight.Connexion
         {
 
             //Create a  tcp listener with config's address and port
-            listener = new TcpListener(ip, port);
-            listener.Start();
-
+            Socket listener = new(
+        AddressFamily.InterNetwork,
+        SocketType.Stream,
+        ProtocolType.Tcp
+    );
             try
             {
                 while (true)
                 {
                     //Store la connexion potentielle
-                    ConnectionHandler connection = new(await listener.AcceptTcpClientAsync());
+                    Socket socket = await listener.AcceptAsync();
+
+                    ConnectionHandler connection = new(socket);
+
 
                     //Si player existe deja, skip (erreur server busy)
                     if (player != null)
@@ -57,7 +61,6 @@ namespace RobotFight.Connexion
 
         public void StopServer()
         {
-            listener?.Stop();
             player?.Dispose();
             player = null;
         }

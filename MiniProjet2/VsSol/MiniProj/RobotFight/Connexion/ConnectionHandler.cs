@@ -6,88 +6,146 @@ using System.Text;
 
 namespace RobotFight.Connexion
 {
-    public interface IMessageSender { Task Send(Message message); }
+    public interface IMessageSender
+    {
+        Task Send(Message message);
+    }
 
     /// <summary>
-    /// Gestion de la connexion  TCP:
-    /// Gère les requêtes en regardant ligne par ligne, pour éviter que deux requêtes s'entrebouffent
+    /// Gestion de la connexion TCP.
+    /// Gère les requêtes ligne par ligne afin d'éviter que deux requêtes
+    /// s'entrebouffent.
     /// </summary>
     public sealed class ConnectionHandler : IDisposable
     {
-        private readonly TcpClient socket;
-        private readonly StreamReader input;
-        private readonly StreamWriter output;
+        private readonly Socket socket;
 
         /// <summary>
-        /// Lock le thread pour éviter deux messages en même temps
+        /// Lock pour éviter d'envoyer deux messages en même temps.
         /// </summary>
         private readonly SemaphoreSlim sendLock = new(1, 1);
 
+        /// <summary>
+        /// Buffer utilisé pour recevoir les données TCP.
+        /// </summary>
+        private readonly byte[] receiveBuffer = new byte[4096];
+
+        private string receiveData = string.Empty;
+
         public bool IsConnected => socket.Connected;
 
-        public ConnectionHandler(TcpClient socket)
+        public ConnectionHandler(Socket socket)
         {
             this.socket = socket;
-            NetworkStream stream = socket.GetStream();
-            input = new StreamReader(stream, Encoding.UTF8);
-            output = new StreamWriter(stream, new UTF8Encoding(false)) { AutoFlush = true, NewLine = "\n" };
         }
 
         /// <summary>
-        /// Lock le thread, convertit le message et le send à l'output, unlock le thread
+        /// Envoie un message sur le socket.
+        /// Chaque message est terminé par un '\n'.
         /// </summary>
-        /// <param name="message">Message à envoyer</param>
-        /// <returns></returns>
         public async Task SendMessage(Message message)
         {
             await sendLock.WaitAsync();
-            try { await output.WriteLineAsync(MessageHelper.Serialize(message)); }
-            finally { sendLock.Release(); }
-        }
 
-
-        /// <summary>
-        /// Toujours open, reçoit null si rien reçu. Parse le message lorsque reçu et le retourne
-        /// </summary>
-        /// <returns>Le message parsed</returns>
-        public async Task<Message?> ReceiveMessage()
-        {
-            while (true)
+            try
             {
-                string? line = await input.ReadLineAsync();
-                if (line == null) return null;
+                string serialized = MessageHelper.Serialize(message) + "<|EOM|>";
+                byte[] bytes = Encoding.UTF8.GetBytes(serialized);
 
-                if (MessageHelper.TryParseMessage(line, out Message? message))
-                    return message;
-
-                //Send error system format message
-                await SendMessage(MessageHelper.Build(MessageType.ERROR, "FORMAT"));
+                await socket.SendAsync(
+                    bytes,
+                    SocketFlags.None
+                );
+            }
+            finally
+            {
+                sendLock.Release();
             }
         }
 
         /// <summary>
-        /// Pour chaque message reçu, callback onMessage lorsque ReceiveMessage ne reçoit pas rien
+        /// Reçoit le prochain message complet.
+        /// Les messages sont séparés par '\n'.
         /// </summary>
-        /// <param name="onMessage">EVENT callback qui fait le rappel (trigger?)</param>
+        public async Task<Message?> ReceiveMessage()
+        {
+            while (true)
+            {
+                int newlineIndex = receiveData.IndexOf("<|EOM|>");
+
+                if (newlineIndex >= 0)
+                {
+                    string line = receiveData[..newlineIndex];
+                    receiveData = receiveData[(newlineIndex + 1)..];
+
+                    line = line.TrimEnd('\r');
+
+                    if (MessageHelper.TryParseMessage(
+                        line,
+                        out Message? message))
+                    {
+                        return message;
+                    }
+
+                    await SendMessage(
+                        MessageHelper.Build(MessageType.ERROR, "FORMAT")
+                    );
+
+                    continue;
+                }
+
+                int bytesReceived;
+
+                try
+                {
+                    bytesReceived = await socket.ReceiveAsync(
+                        receiveBuffer,
+                        SocketFlags.None
+                    );
+                }
+                catch (SocketException)
+                {
+                    return null;
+                }
+
+                // 0 bytes = connexion fermée
+                if (bytesReceived == 0)
+                    return null;
+
+                receiveData += Encoding.UTF8.GetString(
+                    receiveBuffer,
+                    0,
+                    bytesReceived
+                );
+            }
+        }
+
+        /// <summary>
+        /// Écoute continuellement les messages reçus.
+        /// </summary>
         public async Task Listen(Func<Message, Task> onMessage)
         {
             try
             {
                 Message? message;
+
                 while ((message = await ReceiveMessage()) != null)
+                {
                     await onMessage(message);
+                }
             }
-            catch (IOException) { }             // connection dropped
-            catch (ObjectDisposedException) { } // we closed it ourselves
+            catch (SocketException)
+            {
+                // Connexion perdue
+            }
+            catch (ObjectDisposedException)
+            {
+                // Socket fermé volontairement
+            }
         }
 
-        /// <summary>
-        /// Jeter le message lorsque terminé pour pas le laisser dans le thread sans raison
-        /// </summary>
         public void Dispose()
         {
-            input.Dispose();
-            output.Dispose();
             socket.Dispose();
             sendLock.Dispose();
         }

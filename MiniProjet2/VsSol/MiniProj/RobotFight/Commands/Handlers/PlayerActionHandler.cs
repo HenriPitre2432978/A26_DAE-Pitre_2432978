@@ -18,7 +18,7 @@ namespace RobotFight.Commands.Handlers
         /// </summary>
         public override async Task Handle(Message message)
         {
-            if (message.Type == MessageType.TURN)
+            if (message.MessageType == MessageType.TURN)
             {
                 if (message.Data != "CLIENT")
                 {
@@ -31,7 +31,7 @@ namespace RobotFight.Commands.Handlers
                 await Reply(MessageType.PLAYER_ACTION, view.AskPlayerAction());
             }
             //Si on reçoit directement une action
-            else if (message.Type == MessageType.PLAYER_ACTION && onAction != null)
+            else if (message.MessageType == MessageType.PLAYER_ACTION && onAction != null)
             {
                 //Renvoyer l'action reçue au server
                 await onAction(message.Action);
