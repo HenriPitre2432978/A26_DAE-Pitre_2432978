@@ -22,7 +22,7 @@ namespace RobotFight.Commands.Handlers
         /// <returns></returns>
         public override async Task Handle(Message message)
         {
-            switch (message.MessageType)
+            switch (message.Type)
             {
                 case MessageType.ROBOT_CONFIG:
                     RobotConfig? robot = RobotConfig.FromArgs(message.Args);

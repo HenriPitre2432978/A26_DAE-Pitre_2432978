@@ -23,13 +23,23 @@ namespace RobotFight.Commands.Handlers
             if (message.Data == CommandDictionary.OK)
             {
                 //replay confirmé serv-side: refaire OnWelcome
-                view.ShowMessage("Nouvelle partie : reconfigurez votre robot.");
+                ConsoleView.BaseDisplay("CONFIGURATION DU ROBOT");
+
+                view.ShowMessage("");
+                view.ShowMessage("===========================================");
+                view.ShowMessage("Nouvelle partie : Reconfigurez votre robot.");
+                view.ShowMessage("===========================================\n");
                 if (onReplayOk != null) await onReplayOk();
                 return;
             }
 
             //Replay reçu, on confirme et avertit controller
+            view.ShowMessage("");
+            view.ShowMessage("=======================");
             view.ShowMessage("Le joueur veut rejouer.");
+            view.ShowMessage("=======================\n");
+
+            Thread.Sleep(1000);
             await Reply(MessageType.PLAYER_REPLAY, CommandDictionary.OK);
             onReplay?.Invoke();
         }

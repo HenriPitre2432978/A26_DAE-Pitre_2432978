@@ -21,6 +21,10 @@ namespace RobotFight.Connexion
         ProtocolType.Tcp
     );
 
+            //verif ip valide mieux TODO: encore mieux
+            if (System.Net.IPAddress.TryParse(ipAddress, out var parsed) && parsed.Equals(System.Net.IPAddress.Any))
+                ipAddress = System.Net.IPAddress.Loopback.ToString();
+
             await socket.ConnectAsync(ipAddress, port);
 
             connection = new ConnectionHandler(socket);

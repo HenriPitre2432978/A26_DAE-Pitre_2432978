@@ -167,11 +167,11 @@ namespace RobotFight.Controllers
             //If everything OK, display start server
             ConsoleView.BaseDisplay("DÉMARRAGE SERVEUR");
 
-            view.ShowMessage($"Serveur démarré sur le port {Config.PORT} à {Config.IP_ADDRESS}.");
+            view.ShowMessage($"Serveur démarré sur le port {Config.PORT} à {Config.GetIp()}");
             view.ShowMessage($"En attente d'un joueur...");
 
             //Start server jusque StopServer() called
-            await server.StartServer(IPAddress.Parse(Config.IP_ADDRESS), Config.PORT);
+            await server.StartServer(IPAddress.Parse(Config.GetIp()), Config.PORT);
         }
 
         #region Méthodes
@@ -231,7 +231,7 @@ namespace RobotFight.Controllers
 
             //Annoncer reconnexion
             ConsoleView.BaseDisplay("DÉMARRAGE DU SERVEUR");
-            view.ShowMessage($"Serveur démarré sur le port {Config.PORT} à {Config.IP_ADDRESS}.");
+            view.ShowMessage($"Serveur démarré sur le port {Config.PORT} à {Config.GetIp()}");
             view.ShowMessage("Le joueur s'est déconnecté. En attente d'un joueur...");
         }
 

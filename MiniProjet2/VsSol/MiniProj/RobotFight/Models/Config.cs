@@ -8,7 +8,18 @@ namespace RobotFight.Models
     public class Config
     {
         public const int PORT = 6767;
-        public static string IP_ADDRESS = IPAddress.Any.ToString();
+        public static string GetIp()
+        {
+            try
+            {
+                var ip = Dns.GetHostAddresses(Dns.GetHostName())
+                    .FirstOrDefault(a => a.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork
+                                         && !IPAddress.IsLoopback(a));
+                return ip?.ToString() ?? "127.0.0.1";
+            }
+            catch { return "127.0.0.1"; }
+        }
+
         public const int MAX_PLAYERS = 2;
         public const int POINTS_TO_GIVE = 10;
         public const int BASE_ENERGY = 2;

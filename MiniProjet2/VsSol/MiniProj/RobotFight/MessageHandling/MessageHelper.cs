@@ -17,7 +17,7 @@ namespace RobotFight.MessageHandling
         /// <param name="data">Data liée au contexte du message</param>
         /// <returns>Le message formatté</returns>
         public static Message BuildMessage(MessageType type, GameAction action, GameStatus status, string data) =>
-            new() { MessageType = type, Action = action, Status = status, Data = data ?? string.Empty };
+            new() { Type = type, Action = action, Status = status, Data = data ?? string.Empty };
 
         /// <summary>
         /// Créer le message à partir des params donnés
@@ -62,7 +62,7 @@ namespace RobotFight.MessageHandling
             Message r = JsonSerializer.Deserialize<Message>(raw, JsonSerializerOption);
 
             //Créer le msg à partir des infos extracted
-            return BuildMessage(r.MessageType, ExtractAction(r.MessageType, r.Data), StatusFor(r.MessageType), r.Data);
+            return BuildMessage(r.Type, ExtractAction(r.Type, r.Data), StatusFor(r.Type), r.Data);
         }
 
 
@@ -75,7 +75,7 @@ namespace RobotFight.MessageHandling
         public static bool TryParseMessage(string raw, out Message? message)
         {
             try { message = ParseMessage(raw); return true; }
-            catch (FormatException) { message = null; return false; }
+            catch (Exception ex) when (ex is FormatException or JsonException) { message = null; return false; }
         }
 
         /// <summary>

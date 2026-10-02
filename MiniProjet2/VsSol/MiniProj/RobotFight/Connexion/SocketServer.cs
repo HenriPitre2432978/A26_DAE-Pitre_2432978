@@ -16,26 +16,22 @@ namespace RobotFight.Connexion
         public event Func<Message, Task>? MessageReceived;
         public event Action? PlayerDisconnected;
 
+        private Socket? listener;
+
         public async Task StartServer(IPAddress ip, int port)
         {
+            listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-            //Create a  tcp listener with config's address and port
-            Socket listener = new(
-        AddressFamily.InterNetwork,
-        SocketType.Stream,
-        ProtocolType.Tcp
-    );
             try
             {
+                listener.Bind(new IPEndPoint(ip, port));
+                listener.Listen(1); // backlog : nb de connexions en attente
+
                 while (true)
                 {
-                    //Store la connexion potentielle
                     Socket socket = await listener.AcceptAsync();
-
                     ConnectionHandler connection = new(socket);
 
-
-                    //Si player existe deja, skip (erreur server busy)
                     if (player != null)
                     {
                         await connection.SendMessage(MessageHelper.Build(MessageType.SERVER_BUSY));
@@ -63,6 +59,8 @@ namespace RobotFight.Connexion
         {
             player?.Dispose();
             player = null;
+            listener?.Dispose(); //exception si loop infinie
+            listener = null;
         }
 
         public Task Send(Message message) =>

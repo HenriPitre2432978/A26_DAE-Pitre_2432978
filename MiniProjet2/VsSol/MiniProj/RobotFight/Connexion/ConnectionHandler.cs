@@ -32,6 +32,11 @@ namespace RobotFight.Connexion
 
         private string receiveData = string.Empty;
 
+        private const string EOM = "<|EOM|>";
+
+        //nb erreurs recues
+        private int consecutiveFormatErrors;
+
         public bool IsConnected => socket.Connected;
 
         public ConnectionHandler(Socket socket)
@@ -49,7 +54,7 @@ namespace RobotFight.Connexion
 
             try
             {
-                string serialized = MessageHelper.Serialize(message) + "<|EOM|>";
+                string serialized = MessageHelper.Serialize(message) + EOM;
                 byte[] bytes = Encoding.UTF8.GetBytes(serialized);
 
                 await socket.SendAsync(
@@ -71,12 +76,12 @@ namespace RobotFight.Connexion
         {
             while (true)
             {
-                int newlineIndex = receiveData.IndexOf("<|EOM|>");
+                int newlineIndex = receiveData.IndexOf(EOM);
 
                 if (newlineIndex >= 0)
                 {
                     string line = receiveData[..newlineIndex];
-                    receiveData = receiveData[(newlineIndex + 1)..];
+                    receiveData = receiveData[(newlineIndex + EOM.Length)..];
 
                     line = line.TrimEnd('\r');
 
@@ -84,12 +89,14 @@ namespace RobotFight.Connexion
                         line,
                         out Message? message))
                     {
+                        consecutiveFormatErrors = 0;
                         return message;
                     }
 
-                    await SendMessage(
-                        MessageHelper.Build(MessageType.ERROR, "FORMAT")
-                    );
+                    if (++consecutiveFormatErrors <= 2)
+                        await SendMessage(
+                            MessageHelper.Build(MessageType.ERROR, "FORMAT DE REQUETE")
+                        );
 
                     continue;
                 }
@@ -112,11 +119,12 @@ namespace RobotFight.Connexion
                 if (bytesReceived == 0)
                     return null;
 
-                receiveData += Encoding.UTF8.GetString(
+                string chunk = Encoding.UTF8.GetString(
                     receiveBuffer,
                     0,
                     bytesReceived
                 );
+                receiveData += chunk;
             }
         }
 

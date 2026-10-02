@@ -34,7 +34,7 @@ namespace RobotFight.Commands
         /// <param name="message">Le message qui lance l'éxéc</param>
         /// <returns></returns>
         public Task Execute(Message message) =>
-            handlers.TryGetValue(message.MessageType, out ICommand? handler)
+            handlers.TryGetValue(message.Type, out ICommand? handler)
                 ? handler.Handle(message)
                 : Task.CompletedTask;  //Skip si pas de handler (unexpected) TODO: More robust
     }
