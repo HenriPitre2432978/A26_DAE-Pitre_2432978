@@ -745,7 +745,7 @@ public class FonctionsDeBase
             Console.Write(message);
             Console.ResetColor();
 
-            // ReadLine() peut retourner null (ex: Ctrl+Z / entrée fermée) : "?? " évite le crash
+            // lire ip raw et trim espaces
             string ip = (Console.ReadLine() ?? "").Trim();
 
             if (EstIPValide(ip))
@@ -775,8 +775,6 @@ public class FonctionsDeBase
     {
         Console.Write(message);
         return Console.ReadKey().KeyChar;
-        Console.WriteLine();
-
     }
 
     public static char LireChiffre(string message, int maxIncluded = 9)

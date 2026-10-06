@@ -107,7 +107,7 @@ namespace RobotFight.Controllers
 
             view.ShowMessage($"---");
             view.ShowMessage($"{actor} joue {action} ! ({game.LastDamage} dégâts)");
-            view.ShowMessage($"Hôte {game.HostRobot.Hp} PV / {game.HostRobot.Energy} Én. , Vous {game.ClientRobot.Hp} PV / {game.ClientRobot.Energy} Én.");
+            view.ShowMessage($"Client {game.ClientRobot.Hp} PV / {game.ClientRobot.Energy} Én. , Vous {game.HostRobot.Hp} PV / {game.HostRobot.Energy} Én.");
             view.ShowMessage($"---\n");
 
             //Envoyer résultat à serveur 

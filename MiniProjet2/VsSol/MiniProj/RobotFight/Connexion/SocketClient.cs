@@ -51,7 +51,7 @@ namespace RobotFight.Connexion
             catch (OperationCanceledException)
             {
                 socket.Dispose();
-                return $"Aucune réponse de {ip}/{port} en {ConnectTimeoutS.TotalSeconds:0} s. " +
+                return $"\nAucune réponse de {ip}/{port} en {ConnectTimeoutS.TotalSeconds:0} s. " +
                        "Vérifiez l'IP, le statut du serveur, l'autorisation du port dans le pare-feu, et le réseau.";
             }
 

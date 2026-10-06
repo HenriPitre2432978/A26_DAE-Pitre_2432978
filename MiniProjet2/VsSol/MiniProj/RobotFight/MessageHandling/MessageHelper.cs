@@ -54,15 +54,10 @@ namespace RobotFight.MessageHandling
             if (string.IsNullOrWhiteSpace(raw))
                 throw new FormatException("Message vide");
 
-            //raw = raw.Trim();
-            //MessageType type = CommandDictionary.GetMessageType(raw);
-            //string[] parts = raw.Split(CommandDictionary.SEPARATOR, 2);
-            //string data = parts.Length > 1 ? parts[1] : string.Empty;
-
             Message r = JsonSerializer.Deserialize<Message>(raw, JsonSerializerOption);
 
-            //Créer le msg à partir des infos extracted
-            return BuildMessage(r.Type, ExtractAction(r.Type, r.Data), StatusFor(r.Type), r.Data);
+            //get everything CLEAR, ne pas assume from context pour eviter prob uniformité messages
+            return BuildMessage(r.Type, r.Action, StatusFor(r.Type), r.Data);
         }
 
 
