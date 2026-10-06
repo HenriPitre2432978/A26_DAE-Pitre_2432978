@@ -329,6 +329,8 @@ namespace RobotFight.Controllers
             //Attendre que task soit done
             await done.Task;
             view.ShowMessage("Déconnecté.");
+            view.ShowMessage("Appuyez pour fermer la fenêtre...");
+            Console.ReadKey();
         }
 
         /// <summary>
