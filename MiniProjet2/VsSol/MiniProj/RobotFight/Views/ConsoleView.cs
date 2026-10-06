@@ -95,6 +95,9 @@ namespace RobotFight.Views
 
         private static ConsoleKey ReadKey(params ConsoleKey[] allowed)
         {
+            //Clear le buffer pour pas queue la prochaine action
+            Base.FlushInput();
+
             ConsoleKey key;
             do key = Console.ReadKey(true).Key;
             while (!allowed.Contains(key));

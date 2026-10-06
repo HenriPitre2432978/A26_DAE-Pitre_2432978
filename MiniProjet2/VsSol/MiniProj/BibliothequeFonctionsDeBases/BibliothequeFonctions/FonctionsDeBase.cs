@@ -92,7 +92,17 @@ public class FonctionsDeBase
     }
     #endregion
 
-
+    /// <summary>
+    /// Vide le buffer des clavier pour éviter un bug du Readkey
+    /// </summary>
+    public static void FlushInput()
+    {
+        try
+        {
+            while (Console.KeyAvailable) Console.ReadKey(true);
+        }
+        catch (InvalidOperationException) { }//redirect empty
+    }
 
 
     #region Menu system
