@@ -103,6 +103,8 @@ namespace RobotFight.Models
                     break;
 
                 case GameAction.RECHARGE:
+                    //Déjà à 5; eviter waste turn
+                    if (actor.Energy >= Config.MAX_ENERGY) return false;
                     actor.Recharge();
                     break;
             }

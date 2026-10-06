@@ -18,6 +18,8 @@ namespace RobotFight.Commands.Handlers
         {
             //un seul msg possible donc pas de verif
             view.ShowMessage("Le serveur est occupé, une partie est déjà en cours.");
+            view.ShowMessage("Appuyer sur une touche pour fermer la fenêtre...");
+            Console.ReadKey();
 
             //Envoyer on leave pour callback dans gamecontroller
             onLeave();

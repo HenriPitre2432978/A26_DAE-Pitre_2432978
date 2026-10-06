@@ -1,6 +1,7 @@
 ﻿using RobotFight.Models;
+using System.Net;
 using System.Net.Sockets;
-using System.Numerics;
+using Base = BibliothequeFonctionsDeBase.FonctionsDeBase;
 
 namespace RobotFight.Connexion
 {
@@ -13,23 +14,70 @@ namespace RobotFight.Connexion
         public event Action? Disconnected;
         public bool IsConnected() => connection?.IsConnected ?? false;
 
-        public async Task ConnectToServer(string ipAddress, int port)
+        private static readonly TimeSpan ConnectTimeoutS = TimeSpan.FromSeconds(5);
+
+        /// <summary>
+        /// Tente de se connecter au serveur. Ne lance JAMAIS d'exception réseau :
+        /// en cas d'échec, retourne un message d'erreur lisible pour l'utilisateur.
+        /// </summary>
+        /// <param name="ipAddress">IPv4 complète du serveur (ex: 192.168.1.10)</param>
+        /// <param name="port">Port du serveur</param>
+        /// <returns>null si connecté, sinon le message d'erreur à afficher</returns>
+        public async Task<string?> ConnectToServer(string ipAddress, int port)
         {
-            Socket socket = new(
-        AddressFamily.InterNetwork,
-        SocketType.Stream,
-        ProtocolType.Tcp
-    );
+            if (!Base.EstIPValide(ipAddress))
+                return "Adresse IP invalide. Entrez les 4 nombres, ex: 192.168.1.10";
 
-            //verif ip valide mieux TODO: encore mieux
-            if (System.Net.IPAddress.TryParse(ipAddress, out var parsed) && parsed.Equals(System.Net.IPAddress.Any))
-                ipAddress = System.Net.IPAddress.Loopback.ToString();
+            if (port is < 1 or > 65535)
+                return "Port invalide (1 à 65535).";
 
-            await socket.ConnectAsync(ipAddress, port);
+            IPAddress ip = IPAddress.Parse(ipAddress);
+
+            //0.0.0.0 == goto localhost
+            if (ip.Equals(IPAddress.Any))
+                ip = IPAddress.Loopback;
+
+            Socket socket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+            //TRY CONNEXION
+            try
+            {
+                //self timeout pour éviter 20 sec attente erreur
+                using CancellationTokenSource cts = new(ConnectTimeoutS);
+                await socket.ConnectAsync(new IPEndPoint(ip, port), cts.Token);
+            }
+
+            //CATCH ABORT
+            catch (OperationCanceledException)
+            {
+                socket.Dispose();
+                return $"Aucune réponse de {ip}/{port} en {ConnectTimeoutS.TotalSeconds:0} s. " +
+                       "Vérifiez l'IP, le statut du serveur, l'autorisation du port dans le pare-feu, et le réseau.";
+            }
+
+            //CATCH SOCKET ERROR
+            catch (SocketException ex)
+            {
+                socket.Dispose();
+                return ex.SocketErrorCode switch
+                {
+                    SocketError.ConnectionRefused => $"Connexion refusée par {ip}:{port}. Démarrez le serveur !",
+                    SocketError.HostUnreachable or SocketError.NetworkUnreachable => $"{ip} n'a pu être atteint !",
+                    SocketError.TimedOut => $"Aucune réponse de {ip}:{port} (Time Out !)",
+                    _ => $"Connexion impossible : {ex.Message}."
+                };
+            }
+
+            //CATCH OTRHER
+            catch (Exception ex)
+            {
+                socket.Dispose();
+                return $"Connexion impossible : {ex.Message}";
+            }
 
             connection = new ConnectionHandler(socket);
-
             _ = Listen(connection);
+            return null;
         }
 
 

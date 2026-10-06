@@ -118,11 +118,6 @@ public class FonctionsDeBase
             File.AppendAllText(logFilePath, ligne + Environment.NewLine);
         }
     }
-
-
-
-
-
     public class MenuItem(string label, Action action = null, ConsoleColor color = ConsoleColor.White, List<FonctionsDeBase.MenuItem> subMenu = null)
     {
         public string Label { get; set; } = label;
@@ -712,22 +707,52 @@ public class FonctionsDeBase
     #region Lecture de texte
 
 
+    /// <summary>
+    /// Vérifie qu'une string est une adresse IPv4 COMPLÈTE
+    /// (0 à 255) séparés par des points, ex: "192.168.1.10".
+    /// REMPLACE Ip.TryParse car pas robuste (accepte 149.02 par exemple)
+    /// </summary>
+    /// <param name="ip">Le texte à valider</param>
+    /// <returns>true si c'est une IPv4 complète valide</returns>
+    public static bool EstIPValide(string? ip)
+    {
+        if (string.IsNullOrWhiteSpace(ip)) return false;
+
+        string[] parts = ip.Trim().Split('.');
+        if (parts.Length != 4) return false;
+
+        foreach (string part in parts)
+        {
+            // 1 à 3 digits
+            if (part.Length is < 1 or > 3 || !part.All(char.IsAsciiDigit)) return false;
+
+            // Pas de zero au debut
+            if (part.Length > 1 && part[0] == '0') return false;
+
+            if (int.Parse(part) > 255) return false;
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// Demande une adresse IP complète à user until valid
+    /// </summary>
     public static string LireAdresseIP(string message)
     {
-        string? ip;
-
         while (true)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write(message);
             Console.ResetColor();
-            ip = Console.ReadLine().Trim() ?? "";
 
-            if (IPAddress.TryParse(ip, out _))
-                return ip!.Trim();
+            // ReadLine() peut retourner null (ex: Ctrl+Z / entrée fermée) : "?? " évite le crash
+            string ip = (Console.ReadLine() ?? "").Trim();
+
+            if (EstIPValide(ip))
+                return ip;
 
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Adresse IP invalide ! Recommencez.");
+            Console.WriteLine("Adresse IP invalide ! Entrez les 4 nombres (0-255), ex: 192.168.1.10");
             Console.ResetColor();
         }
     }

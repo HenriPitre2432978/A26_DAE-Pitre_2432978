@@ -7,6 +7,7 @@ using RobotFight.Models.Enums;
 using RobotFight.Views;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
+using System.Net.Sockets;
 
 namespace RobotFight.Controllers
 {
@@ -233,6 +234,8 @@ namespace RobotFight.Controllers
             //Annoncer reconnexion
             ConsoleView.BaseDisplay("DÉMARRAGE DU SERVEUR");
             view.ShowMessage($"Serveur démarré sur le port {Config.PORT} à {Config.GetIp()}");
+
+            view.ShowMessage("");
             view.ShowMessage("Le joueur s'est déconnecté. En attente d'un joueur...");
         }
 
@@ -256,7 +259,7 @@ namespace RobotFight.Controllers
                 played = game.Play(true, action);
 
                 //Catch (si pas assez d'énergie)
-                if (!played) view.ShowMessage("Énergie insuffisante : choisissez une autre action.");
+                if (!played) view.ShowMessage("Cette action est impossible, tentez autre chose!");
 
                 //afficher resultat
                 else await TellResult("HOTE", action);
@@ -320,14 +323,32 @@ namespace RobotFight.Controllers
             //Forcer Done à complete la task pour déconnecter le joueur
             client.Disconnected += () => done.TrySetResult();
 
-            //Connecter le client
-            await client.ConnectToServer(ipAddress, port);
+            //Connecter le client. Si ça échoue
+            //afficher raison et reprompt details au lieu de crash
+            string? error;
+            while ((error = await client.ConnectToServer(ipAddress, port)) != null)
+            {
+                view.ShowMessage("");
+                view.ShowMessage($"Échec de la connexion : {error}");
+                view.ShowMessage("");
+                ipAddress = view.AskIpAddress();
+                port = view.AskPort();
+            }
 
-            //Envoyer msg de join à serveur. serv gère l'information de son côté
-            await client.Send(MessageHelper.Build(MessageType.PLAYER_JOIN));
+            try
+            {
+                //Envoyer msg de join à serveur. serv gère l'information de son côté
+                await client.Send(MessageHelper.Build(MessageType.PLAYER_JOIN));
 
-            //Attendre que task soit done
-            await done.Task;
+                //Attendre que task soit done
+                await done.Task;
+            }
+            catch (Exception ex) when (ex is SocketException or IOException or ObjectDisposedException or InvalidOperationException)
+            {
+                //annoncer connexion perdue coté serveru
+                view.ShowMessage($"Connexion perdue : {ex.Message}");
+            }
+            view.ShowMessage("");
             view.ShowMessage("Déconnecté.");
             view.ShowMessage("Appuyez pour fermer la fenêtre...");
             Console.ReadKey();
