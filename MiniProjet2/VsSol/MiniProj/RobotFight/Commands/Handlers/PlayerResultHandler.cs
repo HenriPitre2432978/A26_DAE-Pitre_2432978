@@ -29,7 +29,7 @@ namespace RobotFight.Commands.Handlers
                     //Affiche le résultat du tour qui vient d'être joué
                     view.ShowMessage($"---");
                     view.ShowMessage($"{a[0]} joue {a[1]} ! ({a[2]} dégâts)");
-                    view.ShowMessage($"Hôte {a[3]} PV, Vous {a[4]} PV");
+                    view.ShowMessage($"Hôte {a[3]} PV / {a[5]} Én. , Vous {a[4]} PV / {a[6]} Én.");
                     view.ShowMessage($"---\n");
                     break;
 

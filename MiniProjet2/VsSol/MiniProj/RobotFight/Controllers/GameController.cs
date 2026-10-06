@@ -81,9 +81,10 @@ namespace RobotFight.Controllers
                 status = GameStatus.PLAYING;
             }
 
-            view.ShowMessage("La partie commence !");
+            //Show base stats of each début partie host
+            view.ShowMessage($"Début ! Vous {game.HostRobot.Hp} PV / {game.HostRobot.Energy} én. — Client {game.ClientRobot.Hp} PV / {game.ClientRobot.Energy} én.");
 
-            //Envoyer début partie
+            //Envoyer début partie clienbt
             await Send(MessageType.GAME_START,
                 game!.HostRobot.Hp, game.ClientRobot.Hp, game.HostRobot.Energy, game.ClientRobot.Energy);
 
@@ -105,7 +106,7 @@ namespace RobotFight.Controllers
 
             view.ShowMessage($"---");
             view.ShowMessage($"{actor} joue {action} ! ({game.LastDamage} dégâts)");
-            view.ShowMessage($"Hôte {game.HostRobot.Hp} PV, Vous {game.ClientRobot.Hp} PV");
+            view.ShowMessage($"Hôte {game.HostRobot.Hp} PV / {game.HostRobot.Energy} Én. , Vous {game.ClientRobot.Hp} PV / {game.ClientRobot.Energy} Én.");
             view.ShowMessage($"---\n");
 
             //Envoyer résultat à serveur 
