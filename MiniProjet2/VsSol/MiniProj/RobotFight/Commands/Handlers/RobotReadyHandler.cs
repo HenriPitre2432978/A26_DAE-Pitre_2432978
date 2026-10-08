@@ -57,8 +57,8 @@ namespace RobotFight.Commands.Handlers
                 //Gère les erreurs spécifiques à ACTION
                 case MessageType.ERROR when message.Data == "ACTION":
 
-                    //Un seul cas de fail possible:
-                    view.ShowMessage("Énergie insuffisante : choisissez une autre action.");
+                    //fail energie ou pv
+                    view.ShowMessage("Les niveaux du robot sont saturés. Sélectionnez une autre action.");
 
                     //Callback asynchrone pour relancer le choix d'action
                     if (onActionRefused != null) await onActionRefused();

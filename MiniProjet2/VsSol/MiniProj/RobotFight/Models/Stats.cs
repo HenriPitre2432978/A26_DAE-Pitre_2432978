@@ -17,14 +17,26 @@ namespace RobotFight.Models
 
         public void Add(int amount) => CurrentValue += amount;
 
-        /// <summary>min = 0</summary>
+        /// <summary>
+        /// Enlever qté amount de cette stats au robot
+        /// </summary>
+        /// <param name="amount">qte à enlever</param>
         public void Subtract(int amount) => CurrentValue = Math.Max(0, CurrentValue - amount);
 
-        /// <summary>Plafonne CurrentValue à max (utile pour énergie)</summary>
+        /// <summary>Cap la qté si current value est plus grosse que le max</summary>
+        /// <param name="max">qté maximale à atteindre</param>
         public void Cap(int max) => CurrentValue = Math.Min(CurrentValue, max);
 
-        public void Reset() => CurrentValue = BaseValue;
 
-        public override string ToString() => CurrentValue.ToString();
+        /// <summary>
+        /// Change la valeur de la stat
+        /// </summary>
+        /// <param name="value">nouvelle valeur de la stat</param>
+        public void Set(int value) => CurrentValue = Math.Max(0, value);
+
+        /// <summary>
+        /// Reinitialiser la valeur de la stat à celle initiale (BaseValue)
+        /// </summary>
+        public void Reset() => CurrentValue = BaseValue;
     }
 }

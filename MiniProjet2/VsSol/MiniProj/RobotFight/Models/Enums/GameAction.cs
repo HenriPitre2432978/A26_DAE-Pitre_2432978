@@ -9,6 +9,9 @@ namespace RobotFight.Models.Enums
         ATTACK,
         DEFENSE,
         ATTACK_PUISSANCE,
-        RECHARGE
+        RECHARGE,
+        REPAIR,
+        DODGE,
+        ESCAPE
     }
 }

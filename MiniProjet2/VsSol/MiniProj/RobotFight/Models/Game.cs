@@ -22,10 +22,15 @@ namespace RobotFight.Models
         /// </summary>
         public int LastDamage { get; private set; }
 
-        public Game(Robot hostRobot, Robot playerRobot)
-        {
-            Robots = new List<Robot> { hostRobot, playerRobot };
-        }
+        /// <summary>
+        /// false si la dernière action jouée a été tentée mais ratée (esquive ou fuite).
+        /// </summary>
+        public bool LastActionCompleted { get; private set; } = true;
+
+        /// <summary>true si un robot a réussi sa fuite (combat terminé sans vainqueur)</summary>
+        public bool RobotEscaped { get; private set; }
+
+        public Game(Robot hostRobot, Robot playerRobot) => Robots = [hostRobot, playerRobot];
 
         /// <summary>
         /// Initialize (reset) les robots et recommencer le tour à hote.
@@ -34,6 +39,8 @@ namespace RobotFight.Models
         {
             foreach (Robot robot in Robots) robot.Reset();
             CurrentPlayer = 0;
+            RobotEscaped = false;
+            LastActionCompleted = true;
             Status = GameStatus.PLAYING;
         }
 
@@ -43,7 +50,7 @@ namespace RobotFight.Models
         /// <returns>true si pv=0 pour un des deux</returns>
         public bool CheckGameEnded()
         {
-            bool ended = HostRobot.Hp <= 0 || ClientRobot.Hp <= 0;
+            bool ended = RobotEscaped || !HostRobot.IsAlive() || !ClientRobot.IsAlive();
             if (ended) Status = GameStatus.END_GAME;
             return ended;
         }
@@ -55,10 +62,11 @@ namespace RobotFight.Models
         public Robot? GetWinner()
         {
             if (!CheckGameEnded()) return null;
-            if (HostRobot.Hp <= 0 && ClientRobot.Hp <= 0) return null; // case égal, supposément impossible puisque les deux sont lock.
+            if (RobotEscaped) return null; // fuite = match nul
+            if (!HostRobot.IsAlive() && !ClientRobot.IsAlive()) return null; // case égalité, supposément impossible puisque les deux sont lock.
 
             //Retourner celui ayant pv=0
-            return HostRobot.Hp > 0 ? HostRobot : ClientRobot;
+            return HostRobot.IsAlive() ? HostRobot : ClientRobot;
         }
 
         /// <summary>
@@ -84,6 +92,7 @@ namespace RobotFight.Models
 
             //reset last dmg pour afficher 0 si déf ou reload (au lieu de l'écraswer)
             LastDamage = 0;
+            LastActionCompleted = true;
 
             switch (action)
             {
@@ -106,6 +115,22 @@ namespace RobotFight.Models
                     //Déjà à 5; eviter waste turn
                     if (actor.Energy >= Config.MAX_ENERGY) return false;
                     actor.Recharge();
+                    break;
+
+                case GameAction.REPAIR:
+                    //energie manquante ou PV deja max: rechoose
+                    if (actor.Repair() < 0) return false;
+                    break;
+
+                case GameAction.DODGE:
+                    //Pas assez d'énergie: refusé, tour non consommé
+                    if (!actor.CanDodge) return false;
+                    LastActionCompleted = actor.Dodge();
+                    break;
+
+                case GameAction.ESCAPE:
+                    LastActionCompleted = actor.Escape();
+                    if (LastActionCompleted) RobotEscaped = true;
                     break;
             }
 

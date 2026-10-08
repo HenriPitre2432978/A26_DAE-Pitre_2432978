@@ -34,6 +34,7 @@ namespace RobotFight.Commands.Handlers
             }
 
             //Replay reçu, on confirme et avertit controller
+            ConsoleView.BaseDisplay("CONFIGURATION DU ROBOT");
             view.ShowMessage("");
             view.ShowMessage("=======================");
             view.ShowMessage("Le joueur veut rejouer.");

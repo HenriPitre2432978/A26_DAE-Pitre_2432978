@@ -48,5 +48,17 @@ namespace RobotFight.Models
         public const int ARMOR_PER_POINT = 2;
         public const int DAMAGE_PER_POINT = 2;
         public const int DEFENSE_BONUS = 5;
+        public const int DEFENSE_BONUS_PERCENT = 40;
+        public const int DEFENSE_RECHARGE_CHANCE_PERCENT = 40;
+        public const int DEFENSE_RECHARGE_AMOUNT = 1;
+        public const int RECHARGE_AMOUNT = 2;
+        public const int REPAIR_ENERGY_COST = 1;
+        public const int REPAIR_PERCENT = 10;
+        public const int REPAIR_MIN_HP = 5;
+        public const int DODGE_ENERGY_COST = 1;
+        public const int LUCK_TO_ESCAPE_PERCENT = 15;
+        public const int MIN_SUCCESS_PERCENT = 50;
+        public const int MAX_SUCCESS_PERCENT = 85;
+        public const int MAX_FAIL_STREAK = 2;
     }
 }

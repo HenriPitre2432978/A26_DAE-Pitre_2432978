@@ -58,7 +58,8 @@ namespace RobotFight.Views
         {
             if (robot == null)
             {
-                Base.AfficherTexteCentre("Égalité : les deux robots sont tombés à 0 PV.");
+                //Match nul si fuite (ou les deux sont à 0pv, impossibnle)
+                Base.AfficherTexteCentre("Match nul : Aucun vainqueur (Fuite).");
                 return;
             }
             Base.AfficherTexteCentre(robot.IsHost ? "L'hôte remporte le combat !" : "Le client remporte le combat !");
@@ -77,16 +78,19 @@ namespace RobotFight.Views
 
         public GameAction AskPlayerAction()
         {
-            ShowMessage("Action — (A)ttaque, (D)éfense, (P)uissance, (R)echarge : ", true, true);
-            return ReadKey(ConsoleKey.A, ConsoleKey.D, ConsoleKey.P, ConsoleKey.R) switch
+            ShowMessage("Actions : (A)ttaque, (D)éfense, (P)uissance, (R)echarge, R(E)parer, Es(Q)uiver, (F)uir : ", true, true);
+            return ReadKey(ConsoleKey.A, ConsoleKey.D, ConsoleKey.P, ConsoleKey.R, ConsoleKey.E, ConsoleKey.Q, ConsoleKey.F) switch
             {
                 ConsoleKey.D => GameAction.DEFENSE,
                 ConsoleKey.P => GameAction.ATTACK_PUISSANCE,
                 ConsoleKey.R => GameAction.RECHARGE,
+                ConsoleKey.E => GameAction.REPAIR,
+                ConsoleKey.Q => GameAction.DODGE,
+                ConsoleKey.F => GameAction.ESCAPE,
+                //ConsoleKey.A
                 _ => GameAction.ATTACK
             };
         }
-
         public bool AskPlayerReplay()
         {
             Console.Write("Rejouer ? (O/N) ");

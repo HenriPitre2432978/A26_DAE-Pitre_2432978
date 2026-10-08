@@ -20,7 +20,7 @@ namespace RobotFight.MessageHandling
         public const string START = "START;{pvHote};{pvClient};{energieHote};{energieClient}";
         public const string TURN = "TURN;{HOTE|CLIENT}";
         public const string ACTION = "ACTION;{action}";
-        public const string RESULT = "RESULT;{HOTE|CLIENT};{action};{degats};{pvHote};{pvClient};{energieHote};{energieClient}";
+        public const string RESULT = "RESULT;{HOTE|CLIENT};{action};{actionCompleted};{degats};{pvHote};{pvClient};{energieHote};{energieClient}";
         public const string END = "END;{HOTE|CLIENT};{pvHote};{pvClient}";
         public const string REPLAY = "REPLAY";
         public const string REPLAY_OK = "REPLAY;OK";

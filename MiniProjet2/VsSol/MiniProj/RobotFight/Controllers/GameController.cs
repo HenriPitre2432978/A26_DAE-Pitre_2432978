@@ -13,7 +13,8 @@ namespace RobotFight.Controllers
 {
     /// <summary>
     /// Appelé par Program, s'occupe de lier chaque composante principale du
-    /// jeu, les connexion sockets et l'affichage.
+    /// jeu, les connexion sockets.
+    /// Gère l'affichage SERVERSIDE
     /// </summary>
     public class GameController(IGameView view)
     {
@@ -95,7 +96,7 @@ namespace RobotFight.Controllers
 
         /// <summary>
         /// Afficher action jouée localement + envoyer msg à serveur pour
-        /// afficher à client
+        /// afficher à client (serverside)
         /// </summary>
         /// <param name="actor">Qui a fait l'Action</param>
         /// <param name="action">Action jouée</param>
@@ -105,13 +106,14 @@ namespace RobotFight.Controllers
             //Si erreur (déco, etc) skip
             if (game == null) return Task.CompletedTask;
 
-            view.ShowMessage($"---");
-            view.ShowMessage($"{actor} joue {action} ! ({game.LastDamage} dégâts)");
+            view.ShowMessage($"---", true);
+            view.ShowMessage($"{actor} joue {action} ! ({(game.LastActionCompleted ? "réussi" : "raté")}, {game.LastDamage} dégâts)");
             view.ShowMessage($"Client {game.ClientRobot.Hp} PV / {game.ClientRobot.Energy} Én. , Vous {game.HostRobot.Hp} PV / {game.HostRobot.Energy} Én.");
-            view.ShowMessage($"---\n");
+            if (action == GameAction.DODGE) view.ShowMessage($"La prochaine attaque lancée sera esquivée...");
+            view.ShowMessage($"---\n", true);
 
             //Envoyer résultat à serveur 
-            return Send(MessageType.PLAYER_RESULT, actor, action, game.LastDamage,
+            return Send(MessageType.PLAYER_RESULT, actor, action, game.LastActionCompleted, game.LastDamage,
                 game.HostRobot.Hp, game.ClientRobot.Hp, game.HostRobot.Energy, game.ClientRobot.Energy);
         }
 
