@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="RobotFight.Commands.Handlers.CommandBase">
-    <Position X="10.75" Y="7" Width="1.5" />
+    <Position X="14.25" Y="6" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAgAAAAAAAAAAQAAAAAAAAAAAAAAAAIAAQAAAAAAAAA=</HashCode>
       <FileName>Commands\Handlers\CommandBase.cs</FileName>
@@ -9,207 +9,214 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="RobotFight.Commands.Handlers.PlayerActionHandler">
-    <Position X="8" Y="12" Width="1.5" />
+    <Position X="7.5" Y="9" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAACAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
       <FileName>Commands\Handlers\PlayerActionHandler.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RobotFight.Commands.Handlers.PlayerJoinHandler">
-    <Position X="9.75" Y="12" Width="1.5" />
+    <Position X="12" Y="9" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAIAAAAAAAAQAAAAAAAAAAAAAAAIAIAAAAAAAAAA=</HashCode>
       <FileName>Commands\Handlers\PlayerJoinHandler.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RobotFight.Commands.Handlers.PlayerLeaveHandler">
-    <Position X="11.5" Y="10" Width="1.5" />
+    <Position X="16.5" Y="9" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAQAAIAAAAAAAAAAAA=</HashCode>
       <FileName>Commands\Handlers\PlayerLeaveHandler.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RobotFight.Commands.Handlers.PlayerReplayHandler">
-    <Position X="11.5" Y="12" Width="1.5" />
+    <Position X="18.75" Y="9" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AIAAAAAAAAAAAQAAAAAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
       <FileName>Commands\Handlers\PlayerReplayHandler.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RobotFight.Commands.Handlers.PlayerResultHandler">
-    <Position X="13.25" Y="10" Width="1.5" />
+    <Position X="21" Y="9" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
       <FileName>Commands\Handlers\PlayerResultHandler.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RobotFight.Commands.Handlers.QuitHandler">
-    <Position X="8" Y="10" Width="1.5" />
+    <Position X="9.75" Y="9" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAACAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
       <FileName>Commands\Handlers\QuitHandler.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RobotFight.Commands.Handlers.RobotReadyHandler">
-    <Position X="9.75" Y="10" Width="1.5" />
+    <Position X="14.25" Y="9" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAQAAIAAAAAAAAEAAA=</HashCode>
       <FileName>Commands\Handlers\RobotReadyHandler.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RobotFight.Commands.CommandMenu">
-    <Position X="10.75" Y="4" Width="1.5" />
+    <Position X="9.5" Y="6" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAABAAABAAAAAAAA=</HashCode>
       <FileName>Commands\CommandMenu.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RobotFight.Connexion.ConnectionHandler" BaseTypeListCollapsed="true">
-    <Position X="21" Y="5.25" Width="1.5" />
+    <Position X="16.75" Y="4.25" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAACAAAEBAACAAAAAACCAAABAAAAEAAAAAEAA=</HashCode>
+      <HashCode>AAAAAAAABCAAAEBAACAAAAAAACAAAAAAEAkAAAIAEAA=</HashCode>
       <FileName>Connexion\ConnectionHandler.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
+    <Lollipop Orientation="Right" Position="0.1" Collapsed="true" />
   </Class>
   <Class Name="RobotFight.Connexion.SocketClient" BaseTypeListCollapsed="true">
-    <Position X="22" Y="2" Width="1.5" />
+    <Position X="17.5" Y="0.75" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AQAAAAAAQAAAAEBAAEABAAAAAAAAAAAAIAAAAgAAAAA=</HashCode>
+      <HashCode>AQAAAAAAQAAAAEBAAEABAAAAAAAAAAAAIAAAAgAEAAA=</HashCode>
       <FileName>Connexion\SocketClient.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
+    <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="RobotFight.Connexion.SocketServer" BaseTypeListCollapsed="true">
-    <Position X="20.25" Y="2" Width="1.5" />
+    <Position X="15" Y="0.75" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAQAAAAgAgAEAAAAAAQIAAAAABCAAAAAAAAAA=</HashCode>
       <FileName>Connexion\SocketServer.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
+    <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="RobotFight.Controllers.GameController">
-    <Position X="16.25" Y="2.25" Width="3" />
+    <Position X="11.75" Y="0.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAQIAAAAAAACIAAQEWACABgAAAACcAAICYABBgAwGAI=</HashCode>
       <FileName>Controllers\GameController.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RobotFight.MessageHandling.CommandDictionary">
-    <Position X="19.25" Y="11.5" Width="2.25" />
+    <Position X="22.25" Y="14.75" Width="2" />
     <TypeIdentifier>
       <HashCode>AYAAAAEBAAAAQERAAABAAAAAwAAAAAAABAAJgEhQgAA=</HashCode>
       <FileName>MessageHandling\CommandDictionary.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RobotFight.MessageHandling.MessageHelper">
-    <Position X="19.5" Y="9" Width="1.5" />
+    <Position X="22.25" Y="11" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAEAAAAAAAAAAAAgCgCAACAAgAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAEEAAAAAAAAAAAAgCgCAACAAgAAAAAAAAAAAAAA=</HashCode>
       <FileName>MessageHandling\MessageHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RobotFight.Models.Config">
-    <Position X="3.25" Y="9.75" Width="1.5" />
+    <Position X="7.5" Y="11.5" Width="3" />
     <TypeIdentifier>
-      <HashCode>AAAIAAAAAQAAAAAAAAAAAACAACBAAAAAAE0CAggAAAA=</HashCode>
+      <HashCode>JAAKAAAAAQAAIIAAAACAAACIACBAQAAAAE0SCggAAAA=</HashCode>
       <FileName>Models\Config.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RobotFight.Models.Game">
-    <Position X="3.25" Y="6" Width="1.5" />
+    <Position X="5.75" Y="9" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAACAABEAAAAAIAAAAAAAAAgBABAAAAAgAIAgAAEAAA=</HashCode>
+      <HashCode>AAACAABEAAAAAIgAAAAAAAAgBEBAAAAAgAIAgAAEAAA=</HashCode>
       <FileName>Models\Game.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RobotFight.Models.Message">
-    <Position X="17" Y="10.5" Width="1.5" />
+    <Position X="18" Y="15.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAEAAAAAAAEAAAAAAAAAAAAABAAAQAAAAAEAAQ=</HashCode>
+      <HashCode>AAAAAAAEAAAAAAAEgAAAAAAAAAAAAJAAAQgQAIAEAAQ=</HashCode>
       <FileName>Models\Message.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RobotFight.Models.Robot">
-    <Position X="5.25" Y="9.25" Width="2.25" />
+    <Position X="5.5" Y="20.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAQCAgABAABAAAEAAAAAIAQEAAAAEAAAAABQAA=</HashCode>
+      <HashCode>AQAAAAAYC4gAFAABAAAEAAAAAKAQFAAAAEAAAAABQAA=</HashCode>
       <FileName>Models\Robot.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RobotFight.Models.RobotConfig">
-    <Position X="5.5" Y="6" Width="1.5" />
+    <Position X="3.25" Y="18" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAEAAiAAAggAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
       <FileName>Models\RobotConfig.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RobotFight.Models.Stats">
-    <Position X="5.5" Y="13.25" Width="1.5" />
+    <Position X="5.5" Y="26.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>QIIAAAAAAAQABAAEAAACAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <HashCode>QIIAAAAAAAQABAAAAAACAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
       <FileName>Models\Stats.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RobotFight.Views.ConsoleView" BaseTypeListCollapsed="true">
-    <Position X="21.75" Y="9" Width="1.5" />
+    <Position X="25.25" Y="11" Width="2" />
     <TypeIdentifier>
       <HashCode>AgAAAAgAAAAAAAAAEAAAAEAAAAEIAACAAAAAAAAAACg=</HashCode>
       <FileName>Views\ConsoleView.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Orientation="Bottom" Position="0.202" />
+    <Lollipop Orientation="Bottom" Position="0.202" Collapsed="true" />
   </Class>
   <Class Name="RobotFight.Program">
-    <Position X="14.5" Y="2.25" Width="1.5" />
+    <Position X="24.75" Y="5.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
       <FileName>Program.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Interface Name="RobotFight.Commands.ICommand" Collapsed="true">
-    <Position X="10.75" Y="6" Width="1.5" />
+  <Class Name="RobotFight.Models.Randomize">
+    <Position X="7.5" Y="18" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAQAAAACAAAAAAAAAAAAAAAAQAAAIAAAQ=</HashCode>
+      <FileName>Models\Randomize.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="RobotFight.Commands.ICommand">
+    <Position X="14" Y="4.75" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
       <FileName>Commands\CommandMenu.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="RobotFight.Connexion.IMessageSender" Collapsed="true">
-    <Position X="21" Y="1.25" Width="1.5" />
+  <Interface Name="RobotFight.Connexion.IMessageSender">
+    <Position X="15.5" Y="15.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Connexion\ConnectionHandler.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="RobotFight.Views.IGameView" Collapsed="true">
-    <Position X="21.75" Y="12.25" Width="1.5" />
+  <Interface Name="RobotFight.Views.IGameView">
+    <Position X="23.75" Y="8.25" Width="2" />
     <TypeIdentifier>
       <HashCode>AgAAAAgAAAAAAAAAEAAAAEAAAAEAAACAAAAAAAAAACg=</HashCode>
       <FileName>Views\IGameView.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Enum Name="RobotFight.Models.Enums.GameAction">
-    <Position X="15.5" Y="12" Width="1.5" />
+    <Position X="18" Y="12.25" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAIAAAAAAEAAAAAAAgAAABAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAIAAAAAIEACAAAAAgAAABAAAAAAAAAAAAACAAAA=</HashCode>
       <FileName>Models\Enums\GameAction.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="RobotFight.Models.Enums.GameStatus">
-    <Position X="15.5" Y="10.25" Width="1.5" />
+    <Position X="15.5" Y="12.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAABAAAAAAAAAAAAAAACgAAIAAAAIAAAA=</HashCode>
       <FileName>Models\Enums\GameStatus.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="RobotFight.Models.Enums.MessageType">
-    <Position X="15.5" Y="13.75" Width="1.5" />
+    <Position X="20" Y="11" Width="1.75" />
     <TypeIdentifier>
       <HashCode>EJAAAAABAAAIAAAABAAAAAAAAAAAACAABAihgAAAAAA=</HashCode>
       <FileName>Models\Enums\MessageType.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="RobotFight.Models.Enums.StatsType">
-    <Position X="7.25" Y="14.75" Width="1.5" />
+    <Position X="7.25" Y="26.75" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAARAAQAAAAAAAAAAAAAgA=</HashCode>
       <FileName>Models\Enums\StatsType.cs</FileName>

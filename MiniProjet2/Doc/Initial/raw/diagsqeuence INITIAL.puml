@@ -134,7 +134,7 @@ loop CONNECTÉ tant que le client souhaite jouer/quitte
     alt c'est au tour de l'HÔTE
       S ->> C : **TURN;HOTE**
       C -> J : « Tour de l'adversaire… »
-      loop tant que l'action est refusée : le tour n'est **pas** consommé
+      loop tant que l'action est refusée — le tour n'est **pas** consommé
         S -> H : « ATTAQUE / ATTAQUE_PUISSANTE / DEFENSE / RECHARGE ? »
         H --> S : action
         S -> S : **résolution voir l'encadré des possibilités ci-dessous)**
@@ -147,19 +147,18 @@ loop CONNECTÉ tant que le client souhaite jouer/quitte
       C -> J : affiche le résultat reçu — **aucun calcul local**
 
     else c'est au tour du CLIENT
-      S ->> C : TURN;CLIENT
-      loop tant que l'action est refusée : le tour n'est **pas** consommé
-        C -> J : « ATTAQUE / ATTAQUE_PUISSANTE / DEFENSE / RECHARGE ? »
-        J --> C : action
-        C ->> S : ACTION;{action}
-        S -> S : résolution
-        alt action impossible
-        S ->> C : ERROR;INVALID_ACTION
-        C -> J : « Énergie insuffisante… »
+      S ->> C : **TURN;CLIENT**
+      loop tant que l'action est refusée — le tour n'est **pas** consommé
+        S -> J : « ATTAQUE / ATTAQUE_PUISSANTE / DEFENSE / RECHARGE ? »
+        J --> S : action
+        S -> S : **résolution voir l'encadré des possibilités ci-dessous)**
+        alt action impossible (énergie insuffisante)
+          S -> J : « Énergie insuffisante : choisissez une autre action »
         end
-    end
-    S ->> C : RESULT;CLIENT;...
-    C -> J : affiche le résultat
+      end
+      S ->> C : **RESULT;CLIENT;{action};{degats};{pvHote};{pvClient};{energieHote};{energieClient}**
+      S -> H : affiche le résultat
+      C -> J : affiche le résultat reçu
     end
 
     S -> S : **PV ≤ 0 ? sinon le tour passe à l'adversaire**
@@ -187,7 +186,7 @@ loop CONNECTÉ tant que le client souhaite jouer/quitte
   S -> H : affiche le gagnant et les PV finaux
   C -> J : affiche le gagnant et les PV finaux
 
-  == Rejouer ou quitter (décision du CLIENT seulement) ==
+  == 6 · Rejouer ou quitter (décision du CLIENT seulement) ==
 
   C -> J : « Rejouer une partie ou quitter le jeu ? »
   J --> C : choix
@@ -215,7 +214,7 @@ note over S, C
   **PERTE DE CONNEXION (aleatoire)**
   Une lecture qui échoue, ou qui retourne 0 octet, signifie que le pair a fermé la connexion
   (USE CASE Client ferme app par inadvertance).
-  SERVEUR : avertit l'hôte, libère le socket, puis **retourne en attente** d'un nouveau client.
+  SERVEUR : avertit l'hôte, libère le socket et les flux, puis **retourne en attente** d'un nouveau client.
   CLIENT : avertit le joueur (« Connexion perdue »), libère le socket et se termine proprement.
       Délai d'attente dépassé (plus aucune réponse d'une des deux instances): même traitement, après 3 tentatives aux 10 secs.
   Aucune exception brute à l'écran ; toute ressource réseau est libérée dans tous les cas.

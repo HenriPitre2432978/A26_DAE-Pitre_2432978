@@ -1,0 +1,247 @@
+@startuml Combat_de_robots_Sequence_de_reference
+
+
+
+title Combat de robots — Diagramme de séquence
+
+
+
+
+actor "Joueur\n**HÔTE**" as H
+participant "Application\n**SERVEUR**\n(jeu+joueur1)" as S
+participant "Application\n**CLIENT**\n(joueur2 (affichage))" as C 
+actor "Joueur\n**CLIENT**" as J
+
+
+legend top left
+  ==** FONCTIONNEMENT DU DIAGRAMME **==
+   **(aide memoire pour tous les belges de ce monde)**
+  
+  1. Toujours lire le diagramme en suivant la verticale et le sens des flèches
+  
+  2. Toujours vérifier les lignes pointillées pour voir qui contient quelle action
+  
+  3. Carré "alt" = équivalent d'un "if/catch" : scénario alternatif
+  
+  4. Carré "par" = scénario parallèle: qui s'éxécute
+      en même temps que le thread habituel
+  
+  5. Les parties principales sont séparées par des titres (==Conexion==, etc.)
+  
+  6. Les lignes de textes en majuscules grasses 
+      sont des méthodes ou des communications importantes
+  
+  7. L'indication **REPLAY;OK** et similaire signifie que l'acteur CONFIRME la méthode
+      (ex: ici, le serveur valide que REPLAY peut être éxécuté)
+  ====
+endlegend
+
+' Using a floating note placed to the left of the server/right of legend area
+note over H,J
+  **CONSTANTES IMPORTANTES**
+  ENERGIE au départ = 2, maximum = 5 
+  ATTAQUE_PUISSANTE : coût 2, dégâts *2
+  RECHARGE : +1 énergie
+  DEFENSE : +5 d'armure contre la prochaine attaque reçue
+  REPAIR : +10% PV, minimum 5 PV, coût 1 énergie
+  DODGE : esquive la prochaine attaque, coût 1 énergie
+  ESCAPE : 15% de chance de réussir
+  
+  L'HÔTE joue toujours le premier tour de chaque partie.
+end note
+
+
+== Connexion ==
+
+H -> S : lance l'application en mode SERVEUR (saisie du port d'écoute)
+S -> S : écoute sur {ip}:{port} — attente d'un client
+J -> C : lance l'application en mode CLIENT
+C -> J : demande l'adresse IP du serveur, le port et un nom (PAS LOCALHOST)
+J --> C : {ip} {port} {nom client}
+C -> C : validation du format (IPv4 et port valide)
+C ->> S : **[TCP]** ouverture de la connexion
+
+note over S, J: **À IMPLÉMENTER PLEINEMENT EN FIN DE PROJET, NON PRIORITAIRE**
+alt serveur injoignable ou délai dépassé
+  C -> J : « Impossible de joindre le serveur » → nouvelle saisie
+else connexion acceptée
+  C ->> S : **JOIN;{nom}**
+  alt un client est déjà connecté
+    S ->> C : **SERVER_BUSY**
+    S -> S : Rejeter la  demande JOIN et continuer avec le Client déjà connecté
+    C -> J : message d'erreur puis fin de l'application
+end 
+alt place libre
+    S ->> C : **WELCOME;{nomHote}**
+    C -> J : « Connecté à {nomHote} »
+  end
+end
+
+'-------------------------------------------------------------
+
+loop CONNECTÉ tant que le client souhaite jouer/quitte
+
+  == Config robots (10 pts/robot) ==
+
+  par Configuration de l'HÔTE
+    loop tant que les pts sont refusés
+      S -> H : « Répartissez 10 points : PV / ARMURE / DEGATS »
+      H --> S : pv, armure, degats
+      S -> S : valide : 3 entiers ≥ 0 et pv + armure + degats == 10
+      alt répartition invalide
+        S -> H : « Il faut répartir exactement 10 points »
+      end
+    end
+    end
+    S -> S : robot de l'hôte créé — **configuration verrouillée**
+  par Configuration du CLIENT
+    loop tant que le serveur n'a pas répondu ROBOT;OK
+      C -> J : « Répartissez 10 points : PV / ARMURE / DEGATS »
+      J --> C : pv, armure, degats
+      C -> C : pré-valider - **ne remplace pas** celle du serveur faite par après
+      C ->> S : **ROBOT;{pv};{armure};{degats}**
+      alt somme ≠ 10, valeur négative ou trame incomplète
+        S ->> C : **ERROR;INVALID_CONFIG**
+        C -> J : « Il faut répartir exactement 10 points » → nouvelle saisie
+      else répartition valide
+        S -> S : robot du client créé — **configuration verrouillée**
+        S ->> C : **ROBOT;OK**
+        C -> J : « Configuration verrouillée. En attente de l'adversaire… »
+      end
+    end
+  end
+
+  note over S, C
+    Le serveur connaît les deux répartitions mais ne les transmet jamais.
+    Seuls les PV et l'énergie deviennent publics
+    L'armure et les dégâts restent secrets toute la partie.
+  end note
+
+'-------------------------------------------------------------
+
+  == Début de la partie ==
+
+  S -> S : les deux robots sont prêts -> partie EN_COURS
+  S ->> C : **START;{pvHote};{pvClient};{energieHote};{energieClient}**
+  S -> H : affiche l'état initial
+  C -> J : affiche l'état initial
+
+
+'-------------------------------------------------------------
+
+  == Combat tour par tour ==
+
+  loop tant qu'aucun robot n'est à 0 PV ou moins
+
+    alt c'est au tour de l'HÔTE
+      S ->> C : **TURN;HOTE**
+      C -> J : « Tour de l'adversaire… »
+      loop tant que l'action est refusée : le tour n'est **pas** consommé
+        S -> H : « ATTAQUE / ATTAQUE_PUISSANTE / DEFENSE / RECHARGE / REPARATION / EVITER / FUITE »
+        H --> S : action
+        S -> S : **résolution voir l'encadré des possibilités ci-dessous)**
+        alt action impossible (énergie insuffisante)
+          S -> H : « Énergie insuffisante : choisissez une autre action »
+        end
+      end
+      S ->> C : **RESULT;HOTE;{action};{actionCompleted};{degats};{pvHote};{pvClient};{energieHote};{energieClient}**
+      S -> H : affiche le résultat
+      C -> J : affiche le résultat reçu — **aucun calcul local**
+
+    else c'est au tour du CLIENT
+      S ->> C : TURN;CLIENT
+      loop tant que l'action est refusée : le tour n'est **pas** consommé
+        C -> J : « ATTAQUE / ATTAQUE_PUISSANTE / DEFENSE / RECHARGE ? »
+        J --> C : action
+        C ->> S : ACTION;{action}
+        S -> S : résolution
+        alt action impossible
+        S ->> C : ERROR;INVALID_ACTION
+        C -> J : « Énergie insuffisante… »
+        end
+    end
+    S ->> C : RESULT;CLIENT;...
+    C -> J : affiche le résultat
+    end
+
+    S -> S : **PV ≤ 0 ? sinon le tour passe à l'adversaire**
+  end
+
+  note over S
+    **RÉSOLUTION D'UNE ACTION (éxécuté par le serv pour les 2 joueurs)**
+    
+    **Probabilité de réussite** (ATTAQUE, ATTAQUE_PUISSANTE, DEFENSE, REPAIR, DODGE) :
+      chance = 50% (pleine vie) → 85% (0 PV), linéaire selon les PV perdus
+      Succès garanti après 3 échecs consécutifs
+      Si échec : l'action n'abouti pas et le tour est perdu
+
+    ATTAQUE attack = DEGATS de l'attaquant
+    ATTAQUE_PUISSANTE 
+                      si ENERGIE < 2 --> refus (tour non consommé)
+                      sinon ENERGIE −= 2 et attack = DEGATS * 2
+                      annule la défense en cours de l'attaquant
+    DEFENSE aucun dégât ; bonus d'armure sur la PROCHAINE attaque reçue :
+                      bonus = max(5, 40% de l'armure de l'attaquant)
+    RECHARGE aucun dégât ; ENERGIE = min(ENERGIE + 1, 5)
+    REPAIR            
+                      si ENERGIE < 1 --> refus (tour non consommé)
+                      sinon ENERGIE −= 1 et HP = min(HP + max(5, HP actuels × 10%), HP max)
+    DODGE       
+                      si ENERGIE < 1 --> refus (tour non consommé)
+                      sinon ENERGIE −= 1, esquive la prochaine attaque
+    ESCAPE             
+                      aucun dégât ; 15% de chance
+                      réussite --> FIN de la partie, aucun gagnant
+                      échec --> passe le tour à l'adversaire
+
+    **Réception d'une attaque :**
+      1. Si la cible esquive --> 0 dégât, l'esquive retombe
+      2. Sinon dégâts = max(1, attack − (ARMURE + bonus de défense éventuel))
+      3. Le bonus de défense retombe à 0 dès qu'une attaque est subie
+      PV de la cible −= dégâts ; si PV ≤ 0 --> fin de la partie
+  end note
+
+  == Fin de la partie ==
+
+  S -> S : un robot est à 0 PV ou moins ? --> partie TERMINEE
+  S ->> C : **END;{HOTE / CLIENT / AUCUN};{pvHote};{pvClient}**
+  S -> H : affiche le gagnant et les PV finaux
+  C -> J : affiche le gagnant et les PV finaux
+
+  == Rejouer ou quitter (décision du CLIENT seulement) ==
+
+  C -> J : « Rejouer une partie ou quitter le jeu ? »
+  J --> C : choix
+
+  alt le client choisit REJOUER
+    C ->> S : **REPLAY**
+    S -> S : remet les deux robots aux valeurs de base **et efface les deux répartitions de pts**
+    S ->> C : **REPLAY;OK**
+    S -> H : « Nouvelle partie : reconfigurez votre robot »
+    C -> J : « Nouvelle partie : reconfigurez votre robot »
+    note over S, C : **Retour à l'étape 2** : reconfigurer points stats.
+    
+  else le client choisit QUITTER
+    C ->> S : **QUIT**
+    S ->> C : **QUIT;OK**
+    C -> C : ferme le socket puis termine l'application
+    S -> S : libère la connexion, remet son robot aux valeurs de base\net **retourne en attente** d'un nouveau client (étape 1)
+    note over S, C : Sortie de la boucle : le serveur ne quitte jamais lui-même.
+  end
+
+end
+
+note over S, C : À IMPLÉMENTER EN FIN DE PROJET, NON PRIORITAIRE
+note over S, C
+  **PERTE DE CONNEXION (aleatoire)**
+  Une lecture qui échoue, ou qui retourne 0 octet, signifie que le pair a fermé la connexion
+  (USE CASE Client ferme app par inadvertance).
+  SERVEUR : avertit l'hôte, libère le socket, puis **retourne en attente** d'un nouveau client.
+  CLIENT : avertit le joueur (« Connexion perdue »), libère le socket et se termine proprement.
+      Délai d'attente dépassé (plus aucune réponse d'une des deux instances): même traitement, après 3 tentatives aux 10 secs.
+  Aucune exception brute à l'écran ; toute ressource réseau est libérée dans tous les cas.
+end note
+
+
+
+@enduml

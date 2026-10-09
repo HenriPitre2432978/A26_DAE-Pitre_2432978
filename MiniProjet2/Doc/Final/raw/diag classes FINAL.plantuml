@@ -1,0 +1,319 @@
+    @startuml Jeu
+title Jeu
+
+' =====================
+' Config défaut
+' =====================
+class Config {
+    + port: int
+    + ipAddress: string
+    + maxPlayers: int
+    + pointsToGive: int
+    + baseEnergy: int
+    + maxEnergy: int
+    + baseHp: int = 100
+    + baseArmor: int = 0
+    + baseDamage: int = 10
+    + hpPerPoint: int = 10
+    + armorPerPoint: int = 2
+    + damagePerPoint: int = 2
+    + powerDamageEnergyCost: int = 2
+    + powerDamageMultiplier: int = 2
+    + defenseBonusPercent: int = 40
+    + defenseMinBonus: int = 5
+    + luckToEscapePercent: int = 15
+    + repairPercent = 10;
+    + RepairEnergyCost =1;
+    + dodgeCostEnergy = 1;
+    + rechargeEnergyGain = 2;
+    + repairMinHp = 5;
+    + minSuccessPercent = 50;
+    + maxSuccessPercent = 85;
+    + maxFailStreak = 2;
+}
+
+' =====================
+' Jeu
+' =====================
+
+enum GameStatus {
+    WAITING_FOR_PLAYER
+    WAITING_FOR_PLAYER_CONFIG
+    WAITING_FOR_HOST_CONFIG
+    PLAYING
+    END_GAME
+}
+
+enum GameAction {
+    ATTACK
+    DEFENSE
+    ATTACK_PUISSANCE
+    RECHARGE
+    REPAIR
+    DODGE
+    ESCAPE
+}
+
+class Message {
+    + type: MessageType
+    + action: GameAction
+    + status: GameStatus
+    + data: string
+}
+
+
+class RobotConfig {
+    - hpPoints: int
+    - armorPoints: int
+    - damagePoints: int
+    + RobotConfig(hpPoints: int, armorPoints: int, damagePoints: int)
+    + isValid(pointsToGive: int): boolean
+    + toStats(config: Config): List<Stats>
+}
+
+class GameController {
+    - isHost: boolean
+    + createGame(config: Config): void
+    + joinGame(ipAddress: string, port: int): void
+    + configurePlayer(config: RobotConfig): void
+    + configureHost(config: RobotConfig): void
+    + executeAction(action: GameAction): Message
+    + getGameStatus(): GameStatus
+    + onMessageReceived(message: Message, from: Robot): void
+}
+
+' =====================
+' Dictionnaire
+' =====================
+enum MessageType {
+    PLAYER_JOIN
+    WELCOME
+    SERVER_BUSY
+    ROBOT_CONFIG
+    ROBOT_CONFIG_OK
+    ERROR
+    GAME_START
+    TURN
+    PLAYER_ACTION
+    PLAYER_RESULT
+    GAME_END
+    PLAYER_REPLAY
+    QUIT
+}
+
+    class MessageHelper {
+        + buildMessage(type: MessageType, action: GameAction, status: GameStatus, data: string): Message
+        + parseMessage(message: string): Message
+    }
+
+class CommandDictionary {
+    + {static} CREATE: string = "CREATE"
+    + {static} JOIN: string = "JOIN"
+    + {static} WELCOME: string = "WELCOME;{nomHote}"
+    + {static} SERVER_BUSY: string = "SERVER_BUSY"
+    + {static} ROBOT: string = "ROBOT;{pv};{armure};{degats}"
+    + {static} ROBOT_OK: string = "ROBOT;OK"
+    + {static} ERROR: string = "ERROR;{code}"
+    + {static} START: string = "START;{pvHote};{pvClient};{energieHote};{energieClient}"
+    + {static} TURN: string = "TURN;{HOTE|CLIENT}"
+    + {static} ACTION: string = "ACTION;{action}"
+    + {static} RESULT: string = "RESULT;{HOTE|CLIENT};{action};{actionCompleted};{degats};{pvHote};{pvClient};{energieHote};{energieClient};{energieClient}"
+    + {static} END: string = "END;{HOTE|CLIENT};{pvHote};{pvClient}"
+    + {static} REPLAY: string = "REPLAY"
+    + {static} REPLAY_OK: string = "REPLAY;OK"
+    + {static} QUIT: string = "QUIT"
+    + {static} QUIT_OK: string = "QUIT;OK"
+    + {static} getCommand(type: MessageType): string
+    + {static} getMessageType(command: string): MessageType
+}
+
+
+' =====================
+' Connexion Socket
+' =====================
+
+class SocketServer {
+    - port: int
+    + startServer(port: int): void
+    + stopServer(): void
+    + send(message: Message): void
+}
+
+class SocketClient {
+    - ipAddress: string
+    - port: int
+    + connectToServer(ipAddress: string, port: int): void
+    + exit(): void
+    + isConnected(): boolean
+    + send(message: Message): void
+}
+
+class "ConnectionHandler : IDisposable" {
+        - socket: Socket
+        - input: InputStream
+        - output: OutputStream
+        + sendMessage(message: Message): void
+        + receiveMessage(): Message
+}
+
+' =====================
+' Vue
+' =====================
+
+interface IGameView {
+    + askPlayerType(): string
+    + showMessage(message: string): void
+    + showWinner(robot: Robot): void
+    + askPlayerConfig(): RobotConfig
+    + askPlayerAction(): GameAction
+    + askPlayerReplay(): boolean
+}
+
+class ConsoleView {
+    + askPlayerType(): string
+    + showMessage(message: string): void
+    + showWinner(robot: Robot): void
+    + askPlayerConfig(): RobotConfig
+    + askPlayerAction(): GameAction
+    + askPlayerReplay(): boolean
+}
+
+
+
+class Game {
+    - id: string
+    - status: GameStatus
+    - currentPlayer: int
+    - robots: List<Robot>
+    + startGame(): void
+    + checkGameEnded(): boolean
+    + getWinner(): Robot
+    + Game(config: Config, hostRobot: Robot, playerRobot: Robot)
+}
+
+enum StatsType {
+    HP
+    DAMAGE
+    ARMOR
+    ENERGY
+}
+
+class Stats {
+    - type: StatsType
+    - baseValue: int
+    + currentValue: int
+    + Increase(value: int): void
+    + Decrease(value: int): void
+}
+
+class Robot {
+    - isHost : boolean
+    - initialConfig : RobotConfig
+    - isDodging: boolean
+    - isDefending: boolean
+    - failStreak: int
+    - stats: List<Stats>
+    + isAlive(): boolean
+    + attack(): int
+    + attackWithPower(): int
+    + recharge(): void
+    + defend(): boolean
+    + repair():int
+    + escape(): boolean
+    + dodge():boolean
+    + receiveDamage(damage: int): int
+    + getStats(stats: StatsType): string
+    - hasCompleted(): bool
+}
+
+class Randomize {
+    - random: Random
+    + hasCompleteRandom(hpBase:int, hpNow:int): bool
+    - currentValue: int
+    + randomEscape():boolean
+}
+
+' =====================
+' Handler Message reçu
+' =====================
+
+
+interface ICommand {
+    + handle(message: Message, from:Robot): void
+}
+
+class PlayerActionHandler {
+    + handle(message: Message, from: Robot): void
+}
+class PlayerJoinHandler {
+    + handle(message: Message, from:Robot): void
+}
+class PlayerReplayHandler {
+    + handle(message: Message, from: Robot): void
+}
+class PlayerResultHandler {
+    + handle(message: Message, from: Robot): void
+}
+class QuitHandler {
+    + handle(message: Message, from: Robot): void
+}
+
+class RobotReadyHandler {
+    + handle(message: Message, from: Robot): void
+}
+
+class PlayerLeaveHandler {
+    + handle(message: Message, from: Robot): void
+}
+
+
+
+class CommandMenu {
+    - handlers: Map<MessageType, ICommand>
+    + addHandler(type: MessageType, handler: ICommand): void
+    + execute(message: Message, from: Robot): void
+}
+
+
+
+' =====================
+' Relations
+' =====================
+Game "1" o-- "1" Config
+Game "1" -- "2" Robot
+Robot "1" *-- "4" Stats
+Stats "*" -- "1" StatsType
+IGameView <|.. ConsoleView
+IGameView ..> MessageHelper
+GameController "1" *-- "1" Game
+GameController "1" o-- "0..1" SocketServer
+GameController "1" o-- "0..1" SocketClient
+GameController "1" -- "1" IGameView
+GameController "1" *-- "1" CommandMenu
+
+
+SocketServer "1" o-- "*" "ConnectionHandler : IDisposable"
+SocketClient "1" o-- "1" "ConnectionHandler : IDisposable"
+
+MessageHelper ..> CommandDictionary
+MessageHelper ..> Message
+MessageType -- Message
+GameStatus -- Message
+GameAction -- Message
+
+RobotConfig ..> Robot
+Randomize -- Robot
+Config -- Randomize
+
+
+ICommand "1" --> "1" Game
+ICommand "1" --> "0..1" IGameView
+ICommand <|.. PlayerJoinHandler
+ICommand <|.. RobotReadyHandler
+ICommand <|.. PlayerActionHandler
+ICommand <|.. PlayerResultHandler
+ICommand <|.. PlayerLeaveHandler
+ICommand <|.. PlayerReplayHandler
+ICommand <|.. QuitHandler
+CommandMenu "1" o-- "*" ICommand
+@enduml
